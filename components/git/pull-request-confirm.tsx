@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,7 +9,8 @@ import {
 import { CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { randomUUID, MessageType } from "../chat-interface";
+import { Message as MessageType } from "@/types/message";
+import { randomUUID } from "@/hooks/chat/use-chat-session";
 
 export interface PullRequestConfirmProps {
   showConfirmDialog: boolean;
@@ -18,21 +19,9 @@ export interface PullRequestConfirmProps {
   pendingMessageId: string;
   commitLoading: boolean;
   setCommitLoading: (loading: boolean) => void;
-  pullInfo: {
-    pullRequestNumber: number;
-    pullRequestUrl: string;
-    commitMessageId: string;
-    commitSha: string;
-  } | null;
   projectId: string;
   sessionId: string;
   addMessage: (message: MessageType) => void;
-  setPullInfo: (pullInfo: {
-    pullRequestNumber: number;
-    pullRequestUrl: string;
-    commitMessageId: string;
-    commitSha: string;
-  }) => void;
   setShowNetlifyStatus: (show: boolean) => void;
 }
 
@@ -43,13 +32,17 @@ export const PullRequestConfirm = ({
   pendingMessageId,
   commitLoading,
   setCommitLoading,
-  pullInfo,
   projectId,
   sessionId,
   addMessage,
-  setPullInfo,
   setShowNetlifyStatus,
 }: PullRequestConfirmProps) => {
+  const [pullInfo, setPullInfo] = useState<{
+    pullRequestNumber: number;
+    pullRequestUrl: string;
+    commitMessageId: string;
+    commitSha: string;
+  } | null>(null);
 
 
   const handleConfirmChanges = async () => {
@@ -82,7 +75,7 @@ export const PullRequestConfirm = ({
           id: randomUUID(),
           role: "assistant",
           content: `✅ Changes have been successfully committed to your repository!\n\nPull Request: ${data.pullRequest?.url}\nBranch: ${data.branch}\n\n🚀 Netlify is now building your changes. You'll see the live preview below once it's ready.`,
-          timestamp: new Date().toLocaleTimeString(),
+          timestamp: new Date(),
         };
         addMessage(successMessage);
       } else {
@@ -91,7 +84,7 @@ export const PullRequestConfirm = ({
           id: randomUUID(),
           role: "assistant",
           content: `❌ Failed to commit changes: ${errorData.error}`,
-          timestamp: new Date().toLocaleTimeString(),
+          timestamp: new Date(),
         };
         addMessage(errorMessage);
       }
@@ -100,7 +93,7 @@ export const PullRequestConfirm = ({
         id: randomUUID(),
         role: "assistant",
         content: "❌ Failed to commit changes due to a network error.",
-        timestamp: new Date().toLocaleTimeString(),
+        timestamp: new Date(),
       };
       addMessage(errorMessage);
     } finally {

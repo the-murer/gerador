@@ -50,6 +50,7 @@
     "ai": "latest",
     "autoprefixer": "^10.4.20",
     "bcryptjs": "latest",
+    "bson": "^6.10.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
@@ -86,6 +87,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.9",
+    "@tanstack/react-query-devtools": "^5.89.0",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",

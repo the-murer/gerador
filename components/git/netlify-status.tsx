@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ExternalLink, Globe, Loader2, CheckCircle, Clock } from "lucide-react";
-import { randomUUID } from "../chat-interface";
+import { randomUUID } from "@/hooks/chat/use-chat-session";
 
 interface NetlifyStatusProps {
   projectId: string;
@@ -152,7 +152,7 @@ export function NetlifyStatus({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Globe className="h-5 w-5" />
-            <CardTitle className="text-lg">Netlify Deployment</CardTitle>
+            <CardTitle className="text-lg">Status do preview</CardTitle>
           </div>
           <Badge variant={getStatusColor()} className="flex items-center gap-1">
             {getStatusIcon()}
@@ -165,11 +165,11 @@ export function NetlifyStatus({
         </div>
         <CardDescription>
           {status === "pending" &&
-            "Your changes are being deployed to Netlify..."}
+            "Preparando alterações aguarde..."}
           {status === "deployed" &&
-            "Your modifications are now live and ready to view!"}
+            "Suas alterações estão disponíveis para visualização!"}
           {status === "error" &&
-            "There was an issue checking the deployment status."}
+            "Houve um problema ao verificar o status da alteração."}
         </CardDescription>
       </CardHeader>
 
@@ -184,12 +184,12 @@ export function NetlifyStatus({
                 className="flex items-center gap-2"
               >
                 <ExternalLink className="h-4 w-4" />
-                View Live Preview
+                Visualizar preview
               </a>
             </Button>
 
             <div className="text-sm text-muted-foreground">
-              <p className="font-medium">Preview URL:</p>
+              <p className="font-medium">URL do preview:</p>
               <code className="text-xs bg-muted px-2 py-1 rounded break-all">
                 {previewUrl}
               </code>
@@ -197,12 +197,12 @@ export function NetlifyStatus({
           </div>
         )}
 
-        {previewUrl && (
+        {!previewUrl && (
           <div className="flex items-center justify-between">
             <span className="text-sm text-muted-foreground">
               {lastChecked
-                ? `Last checked: ${lastChecked.toLocaleTimeString()}`
-                : "Checking..."}
+                ? `Última verificação: ${lastChecked.toLocaleTimeString()}`
+                : "Verificando..."}
             </span>
             <Button
               variant="outline"
@@ -213,16 +213,16 @@ export function NetlifyStatus({
               {isChecking ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
-                "Check Now"
+                "Verificar"
               )}
             </Button>
           </div>
         )}
-
-        {comment && (
+  
+        {(comment && !previewUrl) && (
           <details className="text-sm">
             <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
-              View Netlify Comment
+              Visualizar comentários da alteração
             </summary>
             <div className="mt-2 p-3 bg-muted rounded-md">
               <pre className="whitespace-pre-wrap text-xs">{comment}</pre>

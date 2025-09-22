@@ -1,9 +1,9 @@
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "../ui/button";
 import { RotateCcw, X } from "lucide-react";
-import { Badge } from "../ui/badge";
-import { Project, ChatSession } from "./index";
+import { Project } from "@/types/project";
+import { ChatSession } from "@/types/chat-session";
 
 interface ChatSessionHeaderProps {
   handleNewChat: () => void;
@@ -46,17 +46,6 @@ export const ChatSessionHeader = ({
           </div>
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="flex flex-wrap gap-2">
-          <Badge variant="outline">Repository: {project.githubRepo}</Badge>
-          <Badge variant="outline">Branch: {project.destinationBranch}</Badge>
-          {chatSession && (
-            <Badge variant="secondary">
-              Session: {chatSession?.id.slice(0, 8)}
-            </Badge>
-          )}
-        </div>
-      </CardContent>
     </Card>
   );
 };

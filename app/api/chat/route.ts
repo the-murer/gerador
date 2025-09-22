@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import clientPromise from "@/lib/mongodb"
-import { ObjectId } from "mongodb"
+import { ObjectId } from "bson"
 import { AIAgent } from "@/lib/ai-agent"
 
 export async function POST(request: NextRequest) {
@@ -17,6 +17,17 @@ export async function POST(request: NextRequest) {
     // Verify user has access to this project
     const client = await clientPromise
     const projects = client.db().collection("projects")
+    const chatSessions = client.db().collection("chatSessions")
+    
+    const chatSession = await chatSessions.findOne({
+      _id: new ObjectId(sessionId),
+      projectId: new ObjectId(projectId),
+    })
+
+    if (!chatSession) {
+      return NextResponse.json({ error: "Chat session not found" }, { status: 404 })
+    }
+
     const project = await projects.findOne({
       _id: new ObjectId(projectId),
       allowedUsers: { $in: [session.user.id] },
@@ -38,14 +49,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "GitHub token not configured" }, { status: 500 })
     }
 
-    const chatSessions = client.db().collection("chatSessions")
 
-    // Create or update chat session
     await chatSessions.updateOne(
       {
-        sessionId: sessionId,
+        _id: new ObjectId(chatSession._id),
         projectId: new ObjectId(projectId),
-        userId: new ObjectId(session.user.id),
       },
       {
         $push: {
@@ -57,7 +65,7 @@ export async function POST(request: NextRequest) {
           },
         },
         $setOnInsert: {
-          sessionId: sessionId,
+          sessionId: chatSession._id,
           projectId: new ObjectId(projectId),
           userId: new ObjectId(session.user.id),
           createdAt: new Date(),
@@ -71,19 +79,16 @@ export async function POST(request: NextRequest) {
       { upsert: true },
     )
 
-    // Initialize AI Agent with project configuration
     const aiAgent = new AIAgent(githubToken, project.customPrompt, project)
 
-    // Get AI analysis and proposed changes
     const aiResponse = await aiAgent.analyzeAndModify(message, chatHistory)
 
     const responseMessageId = `${messageId}-response`
 
     await chatSessions.updateOne(
       {
-        sessionId: sessionId,
+        _id: new ObjectId(chatSession._id),
         projectId: new ObjectId(projectId),
-        userId: new ObjectId(session.user.id),
       },
       {
         $push: {
@@ -106,7 +111,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       ...aiResponse,
       messageId: responseMessageId,
-      sessionId: sessionId,
+      sessionId: chatSession._id.toString(),
     })
   } catch (error) {
     console.error("Chat error:", error)

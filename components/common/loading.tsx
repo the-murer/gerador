@@ -1,0 +1,10 @@
+import React from "react";
+
+export const Loading = () => {
+  return (
+    <div>
+      <h1>Loading...</h1>
+      <p>The page you are looking for is loading.</p>
+    </div>
+  );
+};

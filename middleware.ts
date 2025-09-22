@@ -1,20 +1,12 @@
 import { withAuth } from "next-auth/middleware"
 
 export default withAuth(
-  function middleware(req) {
-    // Add any additional middleware logic here
-  },
+  function middleware(req) {},
   {
     callbacks: {
       authorized: ({ token, req }) => {
-        // Protect admin routes
         if (req.nextUrl.pathname.startsWith("/admin")) {
           return token?.role === "admin"
-        }
-
-        // Protect dashboard routes
-        if (req.nextUrl.pathname.startsWith("/dashboard")) {
-          return !!token
         }
 
         return true

@@ -1,6 +1,6 @@
 import React from "react";
-import { MessageType } from "./index";
 import { User, Bot } from "lucide-react";
+import { Message as MessageType } from "@/types/message";
 
 export const Message = ({ message }: { message: MessageType }) => {
   return (
@@ -44,7 +44,7 @@ export const Message = ({ message }: { message: MessageType }) => {
           )}
           <div className="flex items-center justify-between mt-1">
             <p className="text-xs opacity-60">
-              {message.timestamp}
+              {message.timestamp.toString()}
             </p>
             {message.messageId && (
               <p className="text-xs opacity-40 font-mono">

@@ -1,14 +1,17 @@
-import { Project } from "@/lib/database/models/project";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-export const useCreateProject = () => {
+interface AddUserToProject {
+  projectId: string;
+  userId: string;
+}
+
+export const useRemoveUserProject = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (project: Project) =>
-      fetch("/api/projects", {
-        method: "POST",
-        body: JSON.stringify(project),
+    mutationFn: ({ projectId, userId }: AddUserToProject) =>
+      fetch(`/api/projects/${projectId}/users/${userId}`, {
+        method: "DELETE",
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });

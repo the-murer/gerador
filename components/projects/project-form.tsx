@@ -1,22 +1,31 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { DEFAULT_SYSTEM_PROMPTS } from "@/lib/ai-prompts"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { DEFAULT_SYSTEM_PROMPTS } from "@/lib/ai-prompts";
+import { useCreateProject } from "@/hooks/projects/use-create-project";
 
-interface ProjectFormProps {
-  onProjectCreated: () => void
-}
-
-export function ProjectForm({ onProjectCreated }: ProjectFormProps) {
+export function ProjectForm() {
   const [formData, setFormData] = useState({
     name: "",
     githubRepo: "",
@@ -24,28 +33,15 @@ export function ProjectForm({ onProjectCreated }: ProjectFormProps) {
     destinationBranch: "main",
     webhookUrl: "",
     projectType: "general",
-  })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState("")
+  });
+  const { mutateAsync: createProject, isPending, isError } = useCreateProject();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError("")
-    setSuccess("")
+    e.preventDefault();
 
     try {
-      const response = await fetch("/api/projects", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      })
-
+      const response = await createProject(formData);
       if (response.ok) {
-        setSuccess("Project created successfully!")
         setFormData({
           name: "",
           githubRepo: "",
@@ -53,33 +49,30 @@ export function ProjectForm({ onProjectCreated }: ProjectFormProps) {
           destinationBranch: "main",
           webhookUrl: "",
           projectType: "general",
-        })
-        onProjectCreated()
-      } else {
-        const data = await response.json()
-        setError(data.error || "Failed to create project")
+        });
       }
     } catch (error) {
-      setError("An error occurred while creating the project")
-    } finally {
-      setLoading(false)
+      console.log("Error creating project ", error);
     }
-  }
+  };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
-    })
-  }
+    });
+  };
 
   const handleProjectTypeChange = (value: string) => {
     setFormData({
       ...formData,
       projectType: value,
-      customPrompt: value !== "general" ? DEFAULT_SYSTEM_PROMPTS[value] || "" : "",
-    })
-  }
+      customPrompt:
+        value !== "general" ? DEFAULT_SYSTEM_PROMPTS[value] || "" : "",
+    });
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -134,7 +127,10 @@ export function ProjectForm({ onProjectCreated }: ProjectFormProps) {
 
       <div className="space-y-2">
         <Label htmlFor="projectType">Project Type</Label>
-        <Select value={formData.projectType} onValueChange={handleProjectTypeChange}>
+        <Select
+          value={formData.projectType}
+          onValueChange={handleProjectTypeChange}
+        >
           <SelectTrigger>
             <SelectValue placeholder="Select project type" />
           </SelectTrigger>
@@ -146,7 +142,8 @@ export function ProjectForm({ onProjectCreated }: ProjectFormProps) {
           </SelectContent>
         </Select>
         <p className="text-sm text-muted-foreground">
-          This helps pre-configure the AI agent with relevant expertise for your project type.
+          This helps pre-configure the AI agent with relevant expertise for your
+          project type.
         </p>
       </div>
 
@@ -162,50 +159,49 @@ export function ProjectForm({ onProjectCreated }: ProjectFormProps) {
           required
         />
         <p className="text-sm text-muted-foreground">
-          This prompt will guide the AI agent when making modifications to your repository. Be specific about your
-          project's requirements, coding standards, and preferences.
+          This prompt will guide the AI agent when making modifications to your
+          repository. Be specific about your project's requirements, coding
+          standards, and preferences.
         </p>
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle className="text-sm">Example Custom Prompts</CardTitle>
-          <CardDescription>Here are some examples to help you write effective prompts</CardDescription>
+          <CardDescription>
+            Here are some examples to help you write effective prompts
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-2 text-sm">
           <div>
             <strong>E-commerce Project:</strong>
             <p className="text-muted-foreground">
-              "You are helping build an e-commerce platform. Focus on user experience, security, and performance. Always
-              validate user inputs, handle errors gracefully, and follow our component naming convention with 'Ecom'
-              prefix."
+              "You are helping build an e-commerce platform. Focus on user
+              experience, security, and performance. Always validate user
+              inputs, handle errors gracefully, and follow our component naming
+              convention with 'Ecom' prefix."
             </p>
           </div>
           <div>
             <strong>API Development:</strong>
             <p className="text-muted-foreground">
-              "You specialize in building RESTful APIs with Node.js and Express. Always include proper error handling,
-              input validation, and follow our API response format with status, data, and message fields."
+              "You specialize in building RESTful APIs with Node.js and Express.
+              Always include proper error handling, input validation, and follow
+              our API response format with status, data, and message fields."
             </p>
           </div>
         </CardContent>
       </Card>
 
-      {error && (
+      {isError && (
         <Alert variant="destructive">
-          <AlertDescription>{error}</AlertDescription>
+          <AlertDescription>{isError}</AlertDescription>
         </Alert>
       )}
 
-      {success && (
-        <Alert>
-          <AlertDescription>{success}</AlertDescription>
-        </Alert>
-      )}
-
-      <Button type="submit" disabled={loading} className="w-full">
-        {loading ? "Creating Project..." : "Create Project"}
+      <Button type="submit" disabled={isPending} className="w-full">
+        {isPending ? "Creating Project..." : "Create Project"}
       </Button>
     </form>
-  )
+  );
 }

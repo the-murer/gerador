@@ -18,11 +18,7 @@ import { NotFound } from "../common/not-found";
 import { useFindUsers } from "@/hooks/users/use-find-users";
 
 export function AdminDashboard() {
-  const {
-    data: projects,
-    isLoading: loadingProjects,
-    refetch: fetchProjects,
-  } = useFindAllProjects();
+  const { data: projects, isLoading: loadingProjects } = useFindAllProjects();
 
   const {
     data: users,
@@ -66,10 +62,7 @@ export function AdminDashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <ProjectList
-                  projects={projects}
-                  onProjectUpdate={fetchProjects}
-                />
+                <ProjectList projects={projects} />
               </CardContent>
             </Card>
           </TabsContent>
@@ -83,7 +76,7 @@ export function AdminDashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <ProjectForm onProjectCreated={fetchProjects} />
+                <ProjectForm />
               </CardContent>
             </Card>
           </TabsContent>

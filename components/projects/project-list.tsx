@@ -1,95 +1,88 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Trash2, Users, GitBranch } from "lucide-react"
-import { Project } from "@/lib/database/models/project"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Trash2, Users, GitBranch } from "lucide-react";
+import { Project } from "@/lib/database/models/project";
+import { useFindUsers } from "@/hooks/users/use-find-users";
+import { useAddUserProject } from "@/hooks/users/use-add-user-project";
+import { useRemoveUserProject } from "@/hooks/users/use-remove-user-project";
+import { useDeleteProject } from "@/hooks/projects/use-delete-project";
 
 interface ProjectListProps {
-  projects: Project[]
-  onProjectUpdate: () => void
+  projects: Project[];
 }
 
-export function ProjectList({ projects, onProjectUpdate }: ProjectListProps) {
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null)
-  const [users, setUsers] = useState([])
-  const [selectedUserId, setSelectedUserId] = useState("")
-
-  const fetchUsers = async () => {
-    try {
-      const response = await fetch("/api/users")
-      if (response.ok) {
-        const data = await response.json()
-        setUsers(data)
-      }
-    } catch (error) {
-      console.error("Failed to fetch users:", error)
-    }
-  }
+export function ProjectList({ projects }: ProjectListProps) {
+  const [selectedUserId, setSelectedUserId] = useState("");
+  const { data: users, refetch: fetchUsers } = useFindUsers();
+  const { mutateAsync: addUserProject } = useAddUserProject();
+  const { mutateAsync: removeUserProject } = useRemoveUserProject();
+  const { mutateAsync: deleteProject } = useDeleteProject();
 
   const handleAddUser = async (projectId: string) => {
-    if (!selectedUserId) return
+    if (!selectedUserId) return;
 
     try {
-      const response = await fetch(`/api/projects/${projectId}/users`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId: selectedUserId }),
-      })
+      const response = await addUserProject({
+        projectId,
+        userId: selectedUserId,
+      });
 
       if (response.ok) {
-        onProjectUpdate()
-        setSelectedUserId("")
+        setSelectedUserId("");
       }
     } catch (error) {
-      console.error("Failed to add user:", error)
+      console.error("Failed to add user:", error);
     }
-  }
+  };
 
   const handleRemoveUser = async (projectId: string, userId: string) => {
-    try {
-      const response = await fetch(`/api/projects/${projectId}/users/${userId}`, {
-        method: "DELETE",
-      })
-
-      if (response.ok) {
-        onProjectUpdate()
-      }
-    } catch (error) {
-      console.error("Failed to remove user:", error)
-    }
-  }
+    await removeUserProject({ projectId, userId }).catch((error) => {
+      console.error("Failed to remove user:", error);
+    });
+  };
 
   const handleDeleteProject = async (projectId: string) => {
-    if (!confirm("Are you sure you want to delete this project?")) return
+    if (!confirm("Are you sure you want to delete this project?")) return;
 
-    try {
-      const response = await fetch(`/api/projects/${projectId}`, {
-        method: "DELETE",
-      })
-
-      if (response.ok) {
-        onProjectUpdate()
-      }
-    } catch (error) {
-      console.error("Failed to delete project:", error)
-    }
-  }
+    await deleteProject(projectId).catch((error) => {
+      console.error("Failed to delete project:", error);
+    });
+  };
 
   if (projects.length === 0) {
     return (
       <div className="text-center py-8">
         <p className="text-muted-foreground">No projects configured yet.</p>
-        <p className="text-sm text-muted-foreground mt-2">Create your first project to get started.</p>
+        <p className="text-sm text-muted-foreground mt-2">
+          Create your first project to get started.
+        </p>
       </div>
-    )
+    );
   }
 
   return (
@@ -115,8 +108,7 @@ export function ProjectList({ projects, onProjectUpdate }: ProjectListProps) {
                       variant="outline"
                       size="sm"
                       onClick={() => {
-                        setSelectedProject(project)
-                        fetchUsers()
+                        fetchUsers();
                       }}
                     >
                       <Users className="h-4 w-4 mr-2" />
@@ -129,13 +121,19 @@ export function ProjectList({ projects, onProjectUpdate }: ProjectListProps) {
                     </DialogHeader>
                     <div className="space-y-4">
                       <div className="flex gap-2">
-                        <Select value={selectedUserId} onValueChange={setSelectedUserId}>
+                        <Select
+                          value={selectedUserId}
+                          onValueChange={setSelectedUserId}
+                        >
                           <SelectTrigger className="flex-1">
                             <SelectValue placeholder="Select a user to add" />
                           </SelectTrigger>
                           <SelectContent>
                             {users
-                              .filter((user: any) => !project.allowedUsers.includes(user._id))
+                              ?.filter(
+                                (user: any) =>
+                                  !project.allowedUsers.includes(user._id)
+                              )
                               .map((user: any) => (
                                 <SelectItem key={user._id} value={user._id}>
                                   {user.name} ({user.email})
@@ -143,30 +141,42 @@ export function ProjectList({ projects, onProjectUpdate }: ProjectListProps) {
                               ))}
                           </SelectContent>
                         </Select>
-                        <Button onClick={() => handleAddUser(project._id)} disabled={!selectedUserId}>
+                        <Button
+                          onClick={() => handleAddUser(project._id)}
+                          disabled={!selectedUserId}
+                        >
                           Add User
                         </Button>
                       </div>
                       <div className="space-y-2">
                         <Label>Current Users</Label>
                         {project.allowedUsers.length === 0 ? (
-                          <p className="text-sm text-muted-foreground">No users assigned to this project.</p>
+                          <p className="text-sm text-muted-foreground">
+                            No users assigned to this project.
+                          </p>
                         ) : (
                           <div className="space-y-2">
                             {project.allowedUsers.map((userId) => {
-                              const user: any = users.find((u: any) => u._id === userId)
+                              const user: any = users?.find(
+                                (u: any) => u._id === userId
+                              );
                               return (
-                                <div key={userId} className="flex items-center justify-between p-2 border rounded">
+                                <div
+                                  key={userId}
+                                  className="flex items-center justify-between p-2 border rounded"
+                                >
                                   <span>{user?.name || "Unknown User"}</span>
                                   <Button
                                     variant="outline"
                                     size="sm"
-                                    onClick={() => handleRemoveUser(project._id, userId)}
+                                    onClick={() =>
+                                      handleRemoveUser(project._id, userId)
+                                    }
                                   >
                                     Remove
                                   </Button>
                                 </div>
-                              )
+                              );
                             })}
                           </div>
                         )}
@@ -174,7 +184,11 @@ export function ProjectList({ projects, onProjectUpdate }: ProjectListProps) {
                     </div>
                   </DialogContent>
                 </Dialog>
-                <Button variant="outline" size="sm" onClick={() => handleDeleteProject(project._id)}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDeleteProject(project._id)}
+                >
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
@@ -183,7 +197,8 @@ export function ProjectList({ projects, onProjectUpdate }: ProjectListProps) {
           <CardContent>
             <div className="space-y-2">
               <p className="text-sm">
-                <strong>Custom Prompt:</strong> {project.customPrompt.substring(0, 100)}...
+                <strong>Custom Prompt:</strong>{" "}
+                {project.customPrompt.substring(0, 100)}...
               </p>
               {project.webhookUrl && (
                 <p className="text-sm">
@@ -198,5 +213,5 @@ export function ProjectList({ projects, onProjectUpdate }: ProjectListProps) {
         </Card>
       ))}
     </div>
-  )
+  );
 }

@@ -23,14 +23,7 @@ import {
 } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { UserPlus, Trash2 } from "lucide-react";
-
-interface User {
-  _id: string;
-  name: string;
-  email: string;
-  role: string;
-  createdAt: string;
-}
+import { User } from "@/lib/database/models/user";
 
 interface Project {
   _id: string;

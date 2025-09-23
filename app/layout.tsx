@@ -3,11 +3,11 @@ import type { Metadata } from "next"
 import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import { Analytics } from "@vercel/analytics/next"
-import { AuthProvider } from "@/components/auth-provider"
-import { QueryProvider } from "@/components/query-provider"
+import { AuthProvider } from "@/components/providers/auth-provider"
+import { QueryProvider } from "@/components/providers/query-provider"
 import { Suspense } from "react"
 import "./globals.css"
-import { Header } from "@/components/header"
+import { Header } from "@/components/common/header"
 
 export const metadata: Metadata = {
   title: "AI GitHub Modifier",

@@ -1,15 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
-import { Button } from "@/components/ui/button";
 import { ProjectSelector } from "@/components/project-selector";
-import { ChatHistory } from "@/components/chat-history";
-import { LogOut, MessageSquare, FolderGit2, ArrowLeft } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { FolderGit2 } from "lucide-react";
 
 export function UserDashboard() {
-
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-1 container mx-auto px-4 py-8">

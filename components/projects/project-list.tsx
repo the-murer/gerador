@@ -8,17 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Trash2, Users, GitBranch } from "lucide-react"
-
-interface Project {
-  _id: string
-  name: string
-  githubRepo: string
-  customPrompt: string
-  destinationBranch: string
-  webhookUrl: string
-  allowedUsers: string[]
-  createdAt: string
-}
+import { Project } from "@/lib/database/models/project"
 
 interface ProjectListProps {
   projects: Project[]
@@ -164,7 +154,7 @@ export function ProjectList({ projects, onProjectUpdate }: ProjectListProps) {
                         ) : (
                           <div className="space-y-2">
                             {project.allowedUsers.map((userId) => {
-                              const user = users.find((u: any) => u._id === userId)
+                              const user: any = users.find((u: any) => u._id === userId)
                               return (
                                 <div key={userId} className="flex items-center justify-between p-2 border rounded">
                                   <span>{user?.name || "Unknown User"}</span>

@@ -1,23 +1,22 @@
 import { Project } from "@/lib/database/models/project";
 import { useQuery } from "@tanstack/react-query";
 
-async function fetchProjects(): Promise<Project[]> {
+const findAllProjects = async (): Promise<Project[] | undefined> => {
   try {
-    const response = await fetch("/api/user/projects");
+    const response = await fetch("/api/projects");
     if (response.ok) {
       const data = await response.json();
-      return data as Project[];
+      return data;
     }
   } catch (error) {
     console.error("Failed to fetch projects:", error);
   }
-  return [];
-}
+};
 
-export function useFindProjects() {
+export function useFindAllProjects() {
   return useQuery({
     queryKey: ["projects"],
-    queryFn: () => fetchProjects(),
+    queryFn: () => findAllProjects(),
     staleTime: 60 * 1000,
     refetchOnWindowFocus: false,
   });

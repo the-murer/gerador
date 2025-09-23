@@ -4,4 +4,5 @@ export interface Project {
   githubRepo: string;
   destinationBranch: string;
   customPrompt: string;
+  description?: string;
 }

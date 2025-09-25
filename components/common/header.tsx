@@ -10,6 +10,11 @@ export const Header = () => {
   const { data: session } = useSession();
 
   const isAdmin = session?.user?.role === "admin";
+
+  if (!session) {
+    return null;
+  }
+
   return (
     <header className="border-b bg-card">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">

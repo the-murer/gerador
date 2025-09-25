@@ -17,13 +17,14 @@ import {
   Trash2,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import { ChatSession } from ".";
+import { ChatSession } from "@/types/chat-session";
+import { useDeleteChatSession } from "@/hooks/chat/use-delete-chat-session";
 
 const getSessionSummary = (session: ChatSession) => {
-  const userMessages = session.messages.filter((m) => m.role === "user");
+  const userMessages = session?.messages?.filter((m) => m.role === "user");
   if (userMessages.length === 0) return "New conversation";
 
-  const firstMessage = userMessages[0].content;
+  const firstMessage = userMessages?.[0]?.content;
   return firstMessage.length > 60
     ? `${firstMessage.substring(0, 60)}...`
     : firstMessage;
@@ -61,17 +62,11 @@ export const ChatSessionCard = ({
   projectId: string;
   onResumeChat: (session: ChatSession) => void;
 }) => {
-  const deleteSession = async (sessionId: string) => {
+  const { mutateAsync: deleteSession } = useDeleteChatSession(projectId);
+
+  const handleDeleteSession = async (sessionId: string) => {
     try {
-      const response = await fetch(
-        `/api/chat/${projectId}/sessions/${sessionId}`,
-        {
-          method: "DELETE",
-        }
-      );
-      //   if (response.ok) {
-      //     onResumeChat(session)
-      //   }
+      await deleteSession(sessionId);
     } catch (error) {
       console.error("Failed to delete session:", error);
     }
@@ -92,7 +87,7 @@ export const ChatSessionCard = ({
               })}
               <span>•</span>
               {session.messages.filter((m) => m.role === "user").length}{" "}
-              messages
+              mensagens
             </CardDescription>
           </div>
           <div className="flex items-center gap-2">
@@ -100,8 +95,9 @@ export const ChatSessionCard = ({
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => deleteSession(session.sessionId)}
+              onClick={() => handleDeleteSession(session._id)}
               className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+              disabled={session.isActive === false}
             >
               <Trash2 className="h-3 w-3" />
             </Button>
@@ -111,28 +107,25 @@ export const ChatSessionCard = ({
       <CardContent className="pt-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            {session.messages.some((m) => m.commitInfo) && (
+            {session.netlifyPreviewUrl && (
               <>
                 <GitCommit className="h-3 w-3" />
-                <span>Changes committed</span>
-                {session.messages.find((m) => m.commitInfo)?.commitInfo
-                  ?.pullRequestUrl && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-auto p-0 text-xs"
-                    onClick={() =>
-                      window.open(
-                        session.messages.find((m) => m.commitInfo)?.commitInfo
-                          ?.pullRequestUrl,
-                        "_blank"
-                      )
-                    }
-                  >
-                    <ExternalLink className="h-3 w-3 mr-1" />
-                    View PR
-                  </Button>
-                )}
+                <span>Alterações enviadas</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-auto p-0 text-xs"
+                  onClick={() => {
+                    console.log(
+                      "🚀 ~ onClick ~ session.netlifyPreviewUrl => ",
+                      session.netlifyPreviewUrl
+                    );
+                    window.open(session.netlifyPreviewUrl, "_blank");
+                  }}
+                >
+                  <ExternalLink className="h-3 w-3 mr-1" />
+                  Visualizar prévia
+                </Button>
               </>
             )}
           </div>

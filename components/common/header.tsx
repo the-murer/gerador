@@ -2,9 +2,9 @@
 
 import React from "react";
 import { MessageSquare, LogOut } from "lucide-react";
-import { Button } from "./ui/button";
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
+import { Button } from "../ui/button";
 
 export const Header = () => {
   const { data: session } = useSession();

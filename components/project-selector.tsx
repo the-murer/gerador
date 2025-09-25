@@ -32,10 +32,10 @@ export function ProjectSelector() {
       <Card className="text-center py-12">
         <CardContent>
           <MessageSquare className="h-12 w-12 mx-auto mb-4 text-muted-foreground animate-spin" />
-          <h3 className="text-lg font-semibold mb-2">No Projects Available</h3>
+          <h3 className="text-lg font-semibold mb-2">Nenhum Projeto Disponível</h3>
           <p className="text-muted-foreground">
-            You don't have access to any projects yet. Contact your
-            administrator to get access to projects.
+            Você não tem acesso a nenhum projeto ainda. Contate seu
+            administrador para obter acesso aos projetos.
           </p>
         </CardContent>
       </Card>
@@ -69,7 +69,7 @@ export function ProjectSelector() {
                   className="w-full"
                 >
                   <MessageSquare className="h-4 w-4 mr-2" />
-                  Start Chatting
+                  Iniciar Conversa
                 </Button>
               </div>
             </CardContent>

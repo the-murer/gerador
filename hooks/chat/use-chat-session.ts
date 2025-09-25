@@ -1,4 +1,3 @@
-import { useState, useCallback } from "react";
 import { ChatSession } from "@/types/chat-session";
 import { useQuery } from "@tanstack/react-query";
 
@@ -54,7 +53,7 @@ async function fetchSessionById({
 
 export function useFindSessionById(params: UseFindSessionByIdParams) {
   return useQuery({
-    queryKey: ["sessions", params.sessionId, params.projectId],
+    queryKey: ["sessions", params.projectId],
     queryFn: () => fetchSessionById(params),
     staleTime: 60 * 1000,
     enabled: !!params.sessionId,

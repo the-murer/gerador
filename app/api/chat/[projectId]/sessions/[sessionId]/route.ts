@@ -1,7 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { connectToDatabase } from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 import clientPromise from "@/lib/mongodb";
 
@@ -10,19 +9,20 @@ export async function GET(
   { params }: { params: { projectId: string; sessionId: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session: any = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { projectId, sessionId } = await params;
-    
+
     const client = await clientPromise;
-    const collection = client.db().collection("chatSessions")
-    
-    const chatSession = await collection
-      .findOne({ _id: new ObjectId(sessionId), projectId: new ObjectId(projectId) });
-    console.log("🚀 ~ GET ~ chatSession => ", chatSession);
+    const collection = client.db().collection("chatSessions");
+
+    const chatSession = await collection.findOne({
+      _id: new ObjectId(sessionId),
+      projectId: new ObjectId(projectId),
+    });
 
     return NextResponse.json(chatSession);
   } catch (error) {
@@ -39,19 +39,18 @@ export async function DELETE(
   { params }: { params: { projectId: string; sessionId: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session: any = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
-    const { db } = await connectToDatabase();
+    const client = await clientPromise;
+    const collection = client.db().collection("chatSessions");
 
     const { projectId, sessionId } = await params;
 
-    const result = await db.collection("chats").deleteMany({
-      sessionId: sessionId,
-      projectId: projectId,
-      userId: session.user.id,
+    const result = await collection.deleteMany({
+      _id: new ObjectId(sessionId),
+      projectId: new ObjectId(projectId),
     });
 
     if (result.deletedCount === 0) {

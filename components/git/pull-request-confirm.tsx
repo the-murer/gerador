@@ -15,35 +15,24 @@ import { randomUUID } from "@/hooks/chat/use-chat-session";
 export interface PullRequestConfirmProps {
   showConfirmDialog: boolean;
   setShowConfirmDialog: (show: boolean) => void;
-  pendingChanges: any;
-  pendingMessageId: string;
-  commitLoading: boolean;
-  setCommitLoading: (loading: boolean) => void;
+  messageId: string;
   projectId: string;
   sessionId: string;
   addMessage: (message: MessageType) => void;
   setShowNetlifyStatus: (show: boolean) => void;
+  setPullRequestNumber: (number: number) => void;
 }
 
 export const PullRequestConfirm = ({
   showConfirmDialog,
   setShowConfirmDialog,
-  pendingChanges,
-  pendingMessageId,
-  commitLoading,
-  setCommitLoading,
+  messageId,
   projectId,
   sessionId,
   addMessage,
-  setShowNetlifyStatus,
+  setShowNetlifyStatus, setPullRequestNumber,
 }: PullRequestConfirmProps) => {
-  const [pullInfo, setPullInfo] = useState<{
-    pullRequestNumber: number;
-    pullRequestUrl: string;
-    commitMessageId: string;
-    commitSha: string;
-  } | null>(null);
-
+  const [commitLoading, setCommitLoading] = useState(false);
 
   const handleConfirmChanges = async () => {
     setCommitLoading(true);
@@ -55,26 +44,20 @@ export const PullRequestConfirm = ({
         },
         body: JSON.stringify({
           projectId: projectId,
-          changes: pendingChanges,
-          messageId: pendingMessageId,
+          messageId,
           sessionId: sessionId,
         }),
       });
 
       if (response.ok) {
         const data = await response.json();
-        setPullInfo({
-            pullRequestNumber: data.pullRequest?.number,
-            pullRequestUrl: data.pullRequest?.url,
-            commitMessageId: data.messageId,
-            commitSha: data.commitSha,
-        });
+        setPullRequestNumber(data.pullRequestNumber);
         setShowNetlifyStatus(true);
 
         const successMessage: MessageType = {
           id: randomUUID(),
           role: "assistant",
-          content: `✅ Changes have been successfully committed to your repository!\n\nPull Request: ${data.pullRequest?.url}\nBranch: ${data.branch}\n\n🚀 Netlify is now building your changes. You'll see the live preview below once it's ready.`,
+          content: `✅ Alterações enviadas com sucesso!\n Em breve você poderá ver as alterações por aqui.`,
           timestamp: new Date(),
         };
         addMessage(successMessage);
@@ -83,7 +66,7 @@ export const PullRequestConfirm = ({
         const errorMessage: MessageType = {
           id: randomUUID(),
           role: "assistant",
-          content: `❌ Failed to commit changes: ${errorData.error}`,
+          content: `❌ Falha ao enviar as alterações: ${errorData.error}`,
           timestamp: new Date(),
         };
         addMessage(errorMessage);
@@ -92,7 +75,7 @@ export const PullRequestConfirm = ({
       const errorMessage: MessageType = {
         id: randomUUID(),
         role: "assistant",
-        content: "❌ Failed to commit changes due to a network error.",
+        content: "❌ Falha ao enviar as alterações devido a um erro de rede.",
         timestamp: new Date(),
       };
       addMessage(errorMessage);
@@ -101,64 +84,38 @@ export const PullRequestConfirm = ({
       setShowConfirmDialog(false);
     }
   };
+
   return (
     <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <CheckCircle className="h-5 w-5" />
-            Confirm Changes
+            Confirmar alterações
           </DialogTitle>
           <DialogDescription>
-            The AI has prepared changes to your repository. Review and confirm
-            to create a pull request.
+            Ao confirmar as alterações, elas serão enviadas e o chat será fechado.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
-          {pendingChanges && (
-            <Alert>
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                <strong>Files to be modified:</strong>
-                <ul className="mt-2 space-y-1 max-h-[200px] overflow-y-auto">
-                  {pendingChanges.files?.map((file: any, index: number) => {
-                    return (
-                      <li key={index} className="text-sm font-mono">
-                        • {file.content}
-                      </li>
-                    );
-                  })}
-                </ul>
-                <p className="mt-2 text-xs text-muted-foreground">
-                  Changes will be committed to a new branch and a pull request
-                  will be created.
-                </p>
-                {pendingMessageId && (
-                  <p className="mt-1 text-xs text-muted-foreground font-mono">
-                    MessageType ID: {pendingMessageId.slice(0, 8)}
-                  </p>
-                )}
-              </AlertDescription>
-            </Alert>
-          )}
           <div className="flex gap-2 justify-end">
             <Button
               variant="outline"
               onClick={() => setShowConfirmDialog(false)}
               disabled={commitLoading}
             >
-              Cancel
+              Cancelar
             </Button>
             <Button onClick={handleConfirmChanges} disabled={commitLoading}>
               {commitLoading ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Creating PR...
+                  Enviando alterações
                 </>
               ) : (
                 <>
                   <CheckCircle className="h-4 w-4 mr-2" />
-                  Create Pull Request
+                  Confirmar alterações
                 </>
               )}
             </Button>

@@ -2,7 +2,7 @@ import React from "react";
 import { User, Bot } from "lucide-react";
 import { Message as MessageType } from "@/types/message";
 
-export const Message = ({ message }: { message: MessageType }) => {
+export const Message = ({ message, showCommitDialog }: { message: MessageType, showCommitDialog: (messageId: string) => void }) => {
   return (
     <div
       key={message.id}
@@ -37,20 +37,15 @@ export const Message = ({ message }: { message: MessageType }) => {
         >
           <p className="text-sm whitespace-pre-wrap">{message.content}</p>
           {!!message.proposedChanges && (
-            <div className="mt-2 p-2 bg-background/10 rounded border">
-              <p className="text-xs font-medium">Proposed Changes Ready</p>
-              <p className="text-xs opacity-80">Click to review and confirm</p>
+            <div className="mt-2 p-2 bg-background/10 rounded border" onClick={() => showCommitDialog(message.id)}>
+              <p className="text-xs font-medium">Alterações prontas</p>
+              <p className="text-xs opacity-80">Clique aqui para confirmar</p>
             </div>
           )}
           <div className="flex items-center justify-between mt-1">
             <p className="text-xs opacity-60">
               {message.timestamp.toString()}
             </p>
-            {message.messageId && (
-              <p className="text-xs opacity-40 font-mono">
-                ID: {message.messageId.slice(0, 8)}
-              </p>
-            )}
           </div>
         </div>
       </div>

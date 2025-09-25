@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
+import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import clientPromise from "@/lib/mongodb"
 import { ObjectId } from "mongodb"
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest, { params }: { params: { projectI
     }).toArray()
 
 
-    return NextResponse.json(chatSessions || [])
+    return NextResponse.json(chatSessions.reverse() || [])
   } catch (error) {
     console.error("Failed to fetch chat history:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

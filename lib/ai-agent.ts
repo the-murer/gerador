@@ -30,16 +30,13 @@ export class AIAgent {
 
   async analyzeAndModify(userRequest: string, chatHistory: any[] = []): Promise<CodeAnalysisResult> {
     try {
-      // Parse repository info
       const { owner, repo } = parseGitHubRepo(this.projectContext.githubRepo)
 
       const repoStructure = await this.getRepositoryStructure(owner, repo)
       const relevantFiles = await this.intelligentFileDiscovery(owner, repo, userRequest, repoStructure)
 
-      // Read content of relevant files
       const fileContents = await this.readRelevantFiles(owner, repo, relevantFiles)
 
-      // Generate AI response with code modifications
       const systemPrompt = this.buildSystemPrompt(repoStructure, fileContents)
       const userPrompt = this.buildUserPrompt(userRequest, chatHistory)
 
@@ -50,12 +47,11 @@ export class AIAgent {
         maxTokens: 4000,
       })
 
-      // Parse AI response to extract proposed changes
       return this.parseAIResponse(text, fileContents)
     } catch (error) {
       console.error("AI Agent error:", error)
       return {
-        message: `I encountered an error while analyzing your request: ${error.message}. Please try rephrasing your request or check if the repository is accessible.`,
+        message: `I encountered an error while analyzing your request. Please try rephrasing or ask again later.`,
       }
     }
   }
@@ -76,22 +72,18 @@ export class AIAgent {
     userRequest: string,
     repoStructure: any[],
   ): Promise<string[]> {
-    // Get all files from repository structure
     const allFiles = this.flattenFileStructure(repoStructure)
 
-    // Categorize files by importance and relevance
     const coreFiles = this.identifyCoreFiles(allFiles)
     const configFiles = this.identifyConfigFiles(allFiles)
     const contextualFiles = this.identifyContextualFiles(allFiles, userRequest)
 
-    // Combine and prioritize files
     const prioritizedFiles = [
       ...coreFiles.slice(0, 5), // Top 5 core files
       ...configFiles.slice(0, 3), // Top 3 config files
       ...contextualFiles.slice(0, 7), // Top 7 contextual files
     ]
 
-    // Remove duplicates and limit total files
     const uniqueFiles = Array.from(new Set(prioritizedFiles.map((f) => f.path)))
     return uniqueFiles.slice(0, 15) // Limit to 15 files to avoid token limits
   }
@@ -176,13 +168,13 @@ PROPOSED_CHANGES_START
 }
 PROPOSED_CHANGES_END
 
-Only include PROPOSED_CHANGES if you are making actual code modifications. For questions or clarifications, just provide a conversational response.`
+Your answer goes to the user. Dont be tehcnical, be human.
+Only include PROPOSED_CHANGES if you are right about making actual code modifications. If you have any doubt ask back the user. For questions or clarifications, just provide a conversational response.`
   }
 
   private buildUserPrompt(userRequest: string, chatHistory: any[]): string {
     let prompt = ""
 
-    // Add relevant chat history (last 5 messages)
     if (chatHistory.length > 0) {
       prompt += "RECENT CONVERSATION:\n"
       const recentHistory = chatHistory.slice(-5)
@@ -198,7 +190,6 @@ Only include PROPOSED_CHANGES if you are making actual code modifications. For q
   }
 
   private parseAIResponse(aiResponse: string, fileContents: any[]): CodeAnalysisResult {
-    // Extract the conversational part
     const changesStartIndex = aiResponse.indexOf("PROPOSED_CHANGES_START")
     const changesEndIndex = aiResponse.indexOf("PROPOSED_CHANGES_END")
 
@@ -206,18 +197,14 @@ Only include PROPOSED_CHANGES if you are making actual code modifications. For q
     let proposedChanges = undefined
 
     if (changesStartIndex !== -1 && changesEndIndex !== -1) {
-      // Extract message part (before proposed changes)
       message = aiResponse.substring(0, changesStartIndex).trim()
 
-      // Extract and parse proposed changes
       const changesJson = aiResponse.substring(changesStartIndex + 22, changesEndIndex).trim()
       try {
         proposedChanges = JSON.parse(changesJson)
 
-        // Validate and enhance proposed changes
         if (proposedChanges && proposedChanges.files) {
           proposedChanges.files = proposedChanges.files.map((file: any) => {
-            // Find original file SHA for updates
             const originalFile = fileContents.find((f) => f.path === file.path)
             return {
               ...file,
@@ -249,7 +236,6 @@ Only include PROPOSED_CHANGES if you are making actual code modifications. For q
     return allFiles
       .filter((file) => corePatterns.some((pattern) => pattern.test(file.path)))
       .sort((a, b) => {
-        // Prioritize by file depth (shallower = more important)
         const depthA = a.path.split("/").length
         const depthB = b.path.split("/").length
         return depthA - depthB

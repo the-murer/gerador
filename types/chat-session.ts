@@ -2,7 +2,6 @@ import { Message } from "./message";
 
 export interface ChatSession {
   _id: string;
-  sessionId: string;
   projectId: string;
   userId: string;
   lastActivity: Date;

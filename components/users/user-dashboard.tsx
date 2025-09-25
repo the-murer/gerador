@@ -10,9 +10,9 @@ export function UserDashboard() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <FolderGit2 className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <h2 className="text-2xl font-semibold mb-2">Select a Project</h2>
+            <h2 className="text-2xl font-semibold mb-2">Selecione um Projeto</h2>
             <p className="text-muted-foreground">
-              Choose a project to start making AI-powered modifications
+              Selecione um projeto para começar a fazer modificações
             </p>
           </div>
           <ProjectSelector />

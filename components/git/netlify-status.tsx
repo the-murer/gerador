@@ -97,7 +97,7 @@ export function NetlifyStatus({
         id: randomUUID(),
         closeMessageId: randomUUID(),
         role: "assistant",
-        content: `🎉 Your changes are now live! The Netlify deployment is complete and you can view your modifications at the preview URL above.`,
+        content: `🎉 Alterações enviadas com sucesso!`,
         timestamp: new Date().toLocaleTimeString(),
       };
       if (messages.find((message: any) => message.closeMessageId)) {

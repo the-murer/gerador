@@ -145,8 +145,9 @@ INSTRUCTIONS:
 1. Analyze the user's request carefully
 2. Understand the existing code structure and patterns
 3. Generate specific, working code modifications
-4. Ensure changes follow the existing code style and patterns
-5. Provide clear reasoning for each change
+4. Doesnt change main infrastructure code, only the code that is requested by the user
+5. Ensure changes follow the existing code style and patterns
+6. Provide clear reasoning for each change
 
 RESPONSE FORMAT:
 Your response should include:

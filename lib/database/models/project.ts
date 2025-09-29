@@ -10,6 +10,12 @@ export interface Project extends mongoose.Document {
   allowedUsers: string[]
   description?: string;
   createdAt: Date
+  toneAndVoice?: {
+    temperature: number;
+    tone: number;
+    treatment: number;
+    style: number;
+  }
 }
 
 const ProjectSchema = new mongoose.Schema<Project>({
@@ -37,7 +43,10 @@ const ProjectSchema = new mongoose.Schema<Project>({
     type: [String],
     required: true,
   },
-  
+  toneAndVoice: {
+    type: Object,
+    required: false,
+  },
   description: {
     type: String,
   },

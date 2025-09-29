@@ -34,6 +34,33 @@ export async function GET(
   }
 }
 
+export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+  try {
+    const session = await getServerSession(authOptions)
+    if (!session || session.user.role !== "admin") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const {_id, ...project} = await request.json()
+    const { id } = await params
+
+    if (!project) {
+      return NextResponse.json({ error: "Payload is required" }, { status: 400 })
+    }
+
+    const client = await clientPromise
+    const projects = client.db().collection("projects")
+
+    await projects.updateOne({ _id: new ObjectId(id) }, { $set: project })
+
+    return NextResponse.json({ message: "Project updated successfully" })
+  } catch (error) {
+    console.error("Failed to update project:", error)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
+}
+
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }

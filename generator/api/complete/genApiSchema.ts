@@ -3,6 +3,10 @@ import { mapObjectFields, BaseObject } from '../../utils';
 export function generateApiSchema(obj: BaseObject) {
   const { entity, model, apiPath } = obj;
 
+  const capitalizeFirstLetter = (string: string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  };
+
   const template = `
 import { TimestampSchema } from '@app/utils/database/schema-utils';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
@@ -12,7 +16,9 @@ import { HydratedDocument } from 'mongoose';
 export class ${entity.pascalCase()} extends TimestampSchema {
   ${mapObjectFields(
     model,
-    (key, type) => `@Prop({ required: true, type: ${type} })
+    (key, type) => `@Prop({ required: true, type: ${capitalizeFirstLetter(
+      type,
+    )} })
   ${key}: ${type.toLowerCase()};`,
   ).join('\n  ')}
 }

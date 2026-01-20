@@ -1,13 +1,15 @@
-import { generateCreateHandler } from "./complete/handlers/genCreateHandler";
-import { generateUpdateHandler } from "./complete/handlers/genUpdateHandler";
-import { generateDeleteHandler } from "./complete/handlers/genDeleteHandler";
-import { generateGetByIdHandler } from "./complete/handlers/genGetByIdHandler";
-import { generateGetPaginatedHandler } from "./complete/handlers/genGetPaginatedHandler";
-import { BaseObject, writeFile } from "../utils";
-import { generateApiSchema } from "./complete/genApiSchema";
-import { generateApiRepository } from "./complete/genApiRepository";
-import { generateApiController } from "./complete/genApiController";
-import { generateApiModule } from "./complete/genApiModule";
+import { generateCreateHandler } from './complete/handlers/genCreateHandler';
+import { generateUpdateHandler } from './complete/handlers/genUpdateHandler';
+import { generateDeleteHandler } from './complete/handlers/genDeleteHandler';
+import { generateGetByIdHandler } from './complete/handlers/genGetByIdHandler';
+import { generateGetPaginatedHandler } from './complete/handlers/genGetPaginatedHandler';
+import { BaseObject, writeFile } from '../utils';
+import { generateApiSchema } from './complete/genApiSchema';
+import { generateApiRepository } from './complete/genApiRepository';
+import { generateApiController } from './complete/genApiController';
+import { generateApiModule } from './complete/genApiModule';
+import { generateFindDto } from './complete/dto/genFindDto';
+import { generateCreateDto } from './complete/dto/genCreateDto';
 
 function generateApiHanlders(obj: BaseObject) {
   const create = generateCreateHandler(obj);
@@ -40,7 +42,16 @@ function generateModule(obj: BaseObject) {
   writeFile(module.template, module.path);
 }
 
+function generateDto(obj: BaseObject) {
+  const createDto = generateCreateDto(obj);
+  writeFile(createDto.template, createDto.path);
+
+  const findDto = generateFindDto(obj);
+  writeFile(findDto.template, findDto.path);
+}
+
 export function generateApi(obj: BaseObject) {
   generateApiHanlders(obj);
   generateModule(obj);
+  generateDto(obj);
 }

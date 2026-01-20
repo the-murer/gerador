@@ -8,7 +8,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CommandHandler } from 'src/utils/command-handler';
 import { ${entity.pluralPascal()}Repository } from '../${entity.pluralKebab()}.repository';
 import { Create${entity.pascalCase()}Dto } from '../dto/create-${entity.kebabCase()}.dto';
-import { ${entity.pascalCase()} } from '../${entity.pluralKebab()}.schema';
+import { ${entity.pascalCase()} } from '../${entity.kebabCase()}.schema';
 
 interface Create${entity.pascalCase()}HandlerInput extends Create${entity.pascalCase()}Dto {}
 

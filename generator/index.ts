@@ -1,52 +1,46 @@
-import { generatePages } from "./page";
-import { generateExtras } from "./extras";
-import { generateApi } from "./api";
+import { generatePages } from './page';
+import { generateApi } from './api';
 import {
   askBooleanOption,
   askModelAttributes,
   askQuestion,
-} from "./generatorCli";
-import { GeneratorBaseObject } from "./utils";
+} from './generatorCli';
+import { GeneratorBaseObject } from './utils';
 
 // OBJETO BASE INICIAL
 const baseObject: GeneratorBaseObject = {
-  entity: "",
-  apiPath: "",
-  path: "",
-  project: "",
+  entity: '',
+  apiPath: '',
   initApi: false,
   initPage: false,
   model: {},
 };
 
 // RODA OS GERADORES
-function generateFiles(baseObject: GeneratorBaseObject) {
-  console.log("\nChamando a função geradora com os seguintes dados:");
-  console.log(JSON.stringify(baseObject, null, 2));
-  const { initApi, initPage } = baseObject;
+function generateFiles(formedObject: GeneratorBaseObject) {
+  console.log('\nChamando a função geradora com os seguintes dados:');
+  console.log(JSON.stringify(formedObject, null, 2));
+  const { initApi, initPage } = formedObject;
 
   if (initApi) {
-    generateApi(baseObject);
-    console.log("Gerando API...");
+    generateApi(formedObject);
+    console.log('Gerando API...');
   }
 
   if (initPage) {
-    generatePages(baseObject);
-    console.log("Gerando Página...");
+    generatePages(formedObject);
+    console.log('Gerando Página...');
   }
 
-  generateExtras(baseObject);
-  console.log("Gerando Extras...");
+  console.log('Geramento terminalizado.');
 }
 
 // GERENCIADOR DE GERADOR
 async function main() {
-  baseObject.entity = await askQuestion("Nome da entidade:");
-  baseObject.path = await askQuestion("Caminho do arquivo:");
-  baseObject.apiPath = await askQuestion("Caminho da API:");
-  baseObject.project = await askQuestion("Caminho do projeto:");
-  baseObject.initApi = await askBooleanOption("Gerar API?");
-  baseObject.initPage = await askBooleanOption("Gerar Página?");
+  baseObject.entity = await askQuestion('Nome da entidade:');
+  baseObject.apiPath = await askQuestion('Caminho da API:');
+  baseObject.initApi = await askBooleanOption('Gerar API?');
+  baseObject.initPage = await askBooleanOption('Gerar Página?');
 
   baseObject.model = await askModelAttributes();
 

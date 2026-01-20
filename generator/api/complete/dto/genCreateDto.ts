@@ -1,6 +1,6 @@
 import { BaseObject, mapObjectFields } from '../../../utils';
 
-export function generateFindDto(obj: BaseObject) {
+export function generateCreateDto(obj: BaseObject) {
   const { entity, apiPath, model } = obj;
 
   const uniqueValidatos = [
@@ -24,6 +24,6 @@ export class Create${entity.pascalCase()}Dto {
 `;
   return {
     template,
-    path: `${apiPath}/${entity.kebabCase()}/dto/find-${entity.pluralKebab()}.dto.ts`,
+    path: `${apiPath}/${entity.kebabCase()}/dto/create-${entity.kebabCase()}.dto.ts`,
   };
 }

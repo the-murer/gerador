@@ -5,7 +5,7 @@ export function generateFindDto(obj: BaseObject) {
 
   const template = `
 import { DefaultPaginationDto } from '@app/app/dtos/default-pagination.dto';
-import { ${entity.pascalCase()} } from '../${entity.pluralKebab()}.schema';
+import { ${entity.pascalCase()} } from '../${entity.kebabCase()}.schema';
 
 export class Find${entity.pluralPascal()}Dto extends DefaultPaginationDto<${entity.pascalCase()}> {}
 

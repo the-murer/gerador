@@ -6,8 +6,8 @@ export function generateDeleteHandler(obj: BaseObject) {
   const handler = `
 import { Injectable } from '@nestjs/common';
 import { CommandHandler } from 'src/utils/command-handler';
-import { ${entity.pascalCase()} } from '../${entity.pluralKebab()}.schema';
-import { ${entity.pascalCase()}Repository } from '../${entity.pluralKebab()}.repository';
+import { ${entity.pascalCase()} } from '../${entity.kebabCase()}.schema';
+import { ${entity.pluralPascal()}Repository } from '../${entity.pluralKebab()}.repository';
 import { UniqueIdDto } from '@app/app/dtos/unique-id.dto';
 
 interface Delete${entity.pascalCase()}HandlerInput extends UniqueIdDto {}
@@ -19,10 +19,14 @@ export class Delete${entity.pascalCase()}Handler
   implements
     CommandHandler<Delete${entity.pascalCase()}HandlerInput, Delete${entity.pascalCase()}HandlerOutput>
 {
-  constructor(private readonly ${entity.camelCase()}Repository: Delete${entity.pascalCase()}Repository) {}
+  constructor(private readonly ${entity.camelCase()}Repository: ${entity.pluralPascal()}Repository) {}
 
   public async execute({ id }: Delete${entity.pascalCase()}HandlerInput) {
     const ${entity.camelCase()} = await this.${entity.camelCase()}Repository.delete(id);
+
+    if (!${entity.camelCase()}) {
+      throw new NotFoundException('${entity.pascalCase()} nao encontrado');
+    }
 
     return ${entity.camelCase()};
   }

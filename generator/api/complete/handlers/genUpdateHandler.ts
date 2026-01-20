@@ -8,7 +8,7 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CommandHandler } from 'src/utils/command-handler';
 import { ${entity.pluralPascal()}Repository } from '../${entity.pluralKebab()}.repository';
 import { Create${entity.pascalCase()}Dto } from '../dto/create-${entity.kebabCase()}.dto';
-import { ${entity.pascalCase()} } from '../${entity.pluralKebab()}.schema';
+import { ${entity.pascalCase()} } from '../${entity.kebabCase()}.schema';
 
 interface Update${entity.pascalCase()}HandlerInput extends Partial<Create${entity.pascalCase()}Dto> {
   id: string
@@ -18,7 +18,7 @@ type Update${entity.pascalCase()}HandlerOutput = ${entity.pascalCase()};
 
 @Injectable()
 export class Update${entity.pascalCase()}Handler
-  implements CommandHandler<Update${entity.camelCase()}HandlerInput, Update${entity.pascalCase()}HandlerOutput>
+  implements CommandHandler<Update${entity.pascalCase()}HandlerInput, Update${entity.pascalCase()}HandlerOutput>
 {
   constructor(
     @Inject(${entity.pluralPascal()}Repository)
@@ -26,7 +26,7 @@ export class Update${entity.pascalCase()}Handler
   ) {}
 
   public async execute({ id, ...input }: Update${entity.pascalCase()}HandlerInput) {
-    const ${entity.camelCase()} = await this.${entity.camelCase()}Repository.updateById(id, input);
+    const ${entity.camelCase()} = await this.${entity.pluralKebab()}Repository.updateById(id, input);
 
     if (!${entity.camelCase()}) {
       throw new NotFoundException('Usuario nao encontrado');

@@ -22,8 +22,6 @@ import { Find${entity.pluralPascal()}Handler } from './handlers/find-${entity.pl
 import { Find${entity.pluralPascal()}Dto } from './dto/find-${entity.pluralKebab()}.dto';
 import { Update${entity.pascalCase()}Handler } from './handlers/update-${entity.kebabCase()}.handler';
 import { UniqueIdDto } from '@app/app/dtos/unique-id.dto';
-import { Change${entity.pascalCase()}ActiveDto } from './dto/change-${entity.kebabCase()}-active.dto';
-import { Change${entity.pascalCase()}ActiveHandler } from './handlers/change-${entity.kebabCase()}-active.handler';
 import { Roles } from '@app/auth/roles/decorator';
 
 @Controller('${entity.pluralKebab()}')

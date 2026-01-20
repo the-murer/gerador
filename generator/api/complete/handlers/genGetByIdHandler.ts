@@ -7,7 +7,7 @@ export function generateGetByIdHandler(obj: BaseObject) {
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CommandHandler } from 'src/utils/command-handler';
 import { ${entity.pluralPascal()}Repository } from '../${entity.pluralKebab()}.repository';
-import { ${entity.pascalCase()} } from '../${entity.pluralKebab()}.schema';
+import { ${entity.pascalCase()} } from '../${entity.kebabCase()}.schema';
 import { UniqueIdDto } from '@app/app/dtos/unique-id.dto';
 
 interface Find${entity.pascalCase()}ByIdHandlerInput extends UniqueIdDto {}

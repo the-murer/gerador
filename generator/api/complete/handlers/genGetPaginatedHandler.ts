@@ -7,7 +7,7 @@ export function generateGetPaginatedHandler(obj: BaseObject) {
 import { Inject, Injectable } from '@nestjs/common';
 import { CommandHandler } from 'src/utils/command-handler';
 import { ${entity.pluralPascal()}Repository } from '../${entity.pluralKebab()}.repository';
-import { ${entity.pascalCase()} } from '../${entity.pluralKebab()}.schema';
+import { ${entity.pascalCase()} } from '../${entity.kebabCase()}.schema';
 import { Find${entity.pluralPascal()}Dto } from '../dto/find-${entity.pluralKebab()}.dto';
 import { DefaultPaginationResponse } from '@app/app/dtos/default-pagination.dto';
 

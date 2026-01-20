@@ -8,12 +8,11 @@ import { Module } from '@nestjs/common';
 import { ${entity.pluralPascal()}Controller } from './${entity.pluralKebab()}.controller';
 import { Create${entity.pascalCase()}Handler } from './handlers/create-${entity.kebabCase()}.handler';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ${entity.pascalCase()}, ${entity.pascalCase()}Schema } from './${entity.pluralKebab()}.schema';
+import { ${entity.pascalCase()}, ${entity.pascalCase()}Schema } from './${entity.kebabCase()}.schema';
 import { ${entity.pluralPascal()}Repository } from './${entity.pluralKebab()}.repository';
 import { Find${entity.pascalCase()}ByIdHandler } from './handlers/find-${entity.kebabCase()}-by-id.handler';
 import { Find${entity.pluralPascal()}Handler } from './handlers/find-${entity.pluralKebab()}.handler';
 import { Update${entity.pascalCase()}Handler } from './handlers/update-${entity.kebabCase()}.handler';
-import { Change${entity.pascalCase()}ActiveHandler } from './handlers/change-${entity.kebabCase()}-active.handler';
 
 @Module({
   imports: [
@@ -26,7 +25,6 @@ import { Change${entity.pascalCase()}ActiveHandler } from './handlers/change-${e
     Find${entity.pascalCase()}ByIdHandler,
     Find${entity.pluralPascal()}Handler,
     Update${entity.pascalCase()}Handler,
-    Change${entity.pascalCase()}ActiveHandler,
     Find${entity.pluralPascal()}Handler,
   ],
   exports: [${entity.pluralPascal()}Repository],

@@ -1,21 +1,31 @@
-import { BaseObject } from "@/types/generatorTypes";
+import { GeneratorBaseObject } from '@/generator/utils';
 
-export function generateCreateHook(obj: BaseObject) {
+export function generateCreateHook(obj: GeneratorBaseObject) {
   const { entity } = obj;
 
-  const hook = `
-import { Create${entity.pascalCase()}Input } from "@/api/${entity.camelCase()}/serializers/create${entity.pascalCase()}Serializer";
-import { pageFetcher } from "@/utils/apiUtils";
-import { useMutation } from "@tanstack/react-query";
+  const template = `
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { userApi } from '../utils/constants'
+import { toaster } from '@/ui/storybook/toaster'
+import type { UserBodySerializerType } from '../utils/schemas'
 
-const create${entity.pascalCase()} = async (data: Create${entity.pascalCase()}Input) =>
-  pageFetcher({ data, endPoint: "api/${entity.kebabCase()}", method: "POST" });
+export const useCreateUser = () => {
+  const queryClient = useQueryClient()
 
-export const useCreate${entity.pascalCase()} = () => {
   return useMutation({
-    mutationFn: create${entity.pascalCase()},
-  });
-};
+    mutationFn: (data: UserBodySerializerType) =>
+      userApi.create(data, { queryClient }),
+    onSuccess: () => {
+      toaster.success({
+        title: 'Usuário criado com sucesso',
+      })
+    },
+  })
+}
 `;
-  return hook;
+
+  return {
+    template,
+    path: `modules/${entity.kebabCase()}/hooks/use-create-${entity.kebabCase()}.ts`,
+  };
 }

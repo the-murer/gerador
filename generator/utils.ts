@@ -82,5 +82,5 @@ export interface BaseObject {
 
 export interface GeneratorBaseObject extends BaseObject {
   initApi: boolean;
-  initPage: boolean;
+  initFront: boolean;
 }

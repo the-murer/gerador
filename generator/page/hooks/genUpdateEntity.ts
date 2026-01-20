@@ -1,21 +1,31 @@
-import { BaseObject } from "@/types/generatorTypes";
+import { GeneratorBaseObject } from '@/generator/utils';
 
-export function generateUpdateHook(obj: BaseObject) {
+export function generateUpdateHook(obj: GeneratorBaseObject) {
   const { entity } = obj;
 
-  const hook = `
-import { Update${entity.pascalCase()}ByIdInput } from "@/api/${entity.camelCase()}/serializers/update${entity.pascalCase()}ByIdSerializer";
-import { pageFetcher } from "@/utils/apiUtils";
-import { useMutation } from "@tanstack/react-query";
+  const template = `
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { userApi } from '../utils/constants'
+import { toaster } from '@/ui/storybook/toaster'
+import type { UserUpdateSerializerType } from '../utils/schemas'
 
-const update${entity.pascalCase()} = async ({ ${entity.camelCase()}Id, ...data }: Update${entity.pascalCase()}ByIdInput) =>
-  pageFetcher({ data, endPoint: \`api/${entity.kebabCase()}/\${${entity.camelCase()}Id}\`, method: "PUT" });
+export const useUpdateUser = () => {
+  const queryClient = useQueryClient()
 
-export const useUpdate${entity.pascalCase()} = () => {
   return useMutation({
-    mutationFn: update${entity.pascalCase()},
-  });
-};
- `;
-  return hook;
+    mutationFn: ({ id, data }: { id: string; data: UserUpdateSerializerType }) =>
+      userApi.update(id, data, { queryClient }),
+    onSuccess: () => {
+      toaster.success({
+        title: 'Usuário atualizado com sucesso',
+      })
+    },
+  })
+}
+`;
+
+  return {
+    template,
+    path: `modules/${entity.kebabCase()}/hooks/use-update-${entity.kebabCase()}.ts`,
+  };
 }

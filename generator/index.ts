@@ -1,4 +1,4 @@
-import { generatePages } from './page';
+import { generateFront } from './page';
 import { generateApi } from './api';
 import {
   askBooleanOption,
@@ -12,7 +12,7 @@ const baseObject: GeneratorBaseObject = {
   entity: '',
   apiPath: '',
   initApi: false,
-  initPage: false,
+  initFront: false,
   model: {},
 };
 
@@ -20,15 +20,15 @@ const baseObject: GeneratorBaseObject = {
 function generateFiles(formedObject: GeneratorBaseObject) {
   console.log('\nChamando a função geradora com os seguintes dados:');
   console.log(JSON.stringify(formedObject, null, 2));
-  const { initApi, initPage } = formedObject;
+  const { initApi, initFront } = formedObject;
 
   if (initApi) {
     generateApi(formedObject);
     console.log('Gerando API...');
   }
 
-  if (initPage) {
-    generatePages(formedObject);
+  if (initFront) {
+    generateFront(formedObject);
     console.log('Gerando Página...');
   }
 
@@ -40,7 +40,7 @@ async function main() {
   baseObject.entity = await askQuestion('Nome da entidade:');
   baseObject.apiPath = await askQuestion('Caminho da API:');
   baseObject.initApi = await askBooleanOption('Gerar API?');
-  baseObject.initPage = await askBooleanOption('Gerar Página?');
+  baseObject.initFront = await askBooleanOption('Gerar Página?');
 
   baseObject.model = await askModelAttributes();
 

@@ -1,26 +1,23 @@
-import { BaseObject } from "@/types/generatorTypes";
+import { GeneratorBaseObject } from '@/generator/utils';
 
-export function generateGetHook(obj: BaseObject) {
+export function generateGetByIdHook(obj: GeneratorBaseObject) {
   const { entity } = obj;
 
-  const hook = `
-import { pageFetcher } from "@/utils/apiUtils";
-import { useQuery } from "@tanstack/react-query";
+  const template = `
+import { useQuery } from '@tanstack/react-query'
+import { userApi } from '../utils/constants'
 
-const get${entity.pascalCase()}Key = "${entity.camelCase()}";
-
-const get${entity.pascalCase()} = async ({ ${entity.camelCase()}Id }: { ${entity.camelCase()}Id: string }) =>
-  pageFetcher({
-    endPoint: \`/api/${entity.kebabCase()}/\${${entity.camelCase()}Id}\`,
-    method: "GET",
-  });
-
-export const useGet${entity.pascalCase()} = ({ ${entity.camelCase()}Id }: { ${entity.camelCase()}Id: string }) => {
+export const useGetUser = ({ id }: { id: string }) => {
   return useQuery({
-    queryKey: [get${entity.pascalCase()}Key, ${entity.camelCase()}Id],
-    queryFn: () => get${entity.pascalCase()}({ ${entity.camelCase()}Id }),
-  });
-};
+    queryFn: () => userApi.get(id),
+    queryKey: userApi.keys.get(id),
+  })
+}
+
 `;
-  return hook;
+
+  return {
+    template,
+    path: `modules/${entity.kebabCase()}/hooks/use-get-${entity.kebabCase()}.ts`,
+  };
 }

@@ -1,35 +1,49 @@
-import { BaseObject } from "@/types/generatorTypes";
-import { mapObjectFields } from "../../utils";
+import { GeneratorBaseObject } from '@/generator/utils';
 
-export function generateEntityForm({ entity, model }: BaseObject) {
-  const page = `
-import { UseFormReturn } from "react-hook-form";
+export function generateEntityForm(obj: GeneratorBaseObject) {
+  const { entity } = obj;
 
-import Input from "@/ui/stories/components/input/input";
+  const template = `
+import { DefaultInput } from '@/ui/components/input/input'
+import { InputTypes } from '@/ui/components/input/input-map'
+import { type Control } from 'react-hook-form'
 
-type ${entity.pascalCase()}FormProps = {
-  form: UseFormReturn<any, any, undefined>;
-};
+export const UserForm = ({ control }: { control: Control<any> }) => {
+  const rolesOptions = [
+    { label: 'Administrador', value: 'admin' },
+    { label: 'Usuário', value: 'user' },
+  ]
 
-const ${entity.pascalCase()}Form = ({ form }: ${entity.pascalCase()}FormProps) => {
   return (
-    <div>
-      ${mapObjectFields(
-        model,
-        (key, value) => `
-      <Input
-        form={form}
-        label="${key}"
-        placeholder="Digite o ${key} do ${entity.pascalCase()}"
-        name="${key}"
-        type="${value}"
-      />`
-      ).join("\n  ")}
-    </div>
-  );
-};
+    <form>
+      <DefaultInput
+        type={InputTypes.TEXT}
+        name="name"
+        label="Nome"
+        control={control}
+      />
+      <DefaultInput
+        type={InputTypes.TEXT}
+        name="email"
+        label="Email"
+        control={control}
+      />
+      <DefaultInput
+        type={InputTypes.MULTI_SELECT}
+        name="roles"
+        label="Roles"
+        placeholder="Selecione as regras"
+        control={control}
+        options={rolesOptions}
+      />
+    </form>
+  )
+}
 
-export default ${entity.pascalCase()}Form;
 `;
-  return page;
+
+  return {
+    template,
+    path: `modules/${entity.kebabCase()}/components/${entity.kebabCase()}-form.tsx`,
+  };
 }

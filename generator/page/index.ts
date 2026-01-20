@@ -1,77 +1,76 @@
-import { writeFile } from "../utils";
-import { generateMainPageFile } from "./client/genMainPage";
-import { generateRecordPage } from "./client/genRecordPage";
-import { generateCreateModal } from "./components/genCreateModal";
-import { generateUpdateModal } from "./components/genUpdateModal";
-import { generateDeleteModal } from "./components/genDeleteModal";
-import { generateEntityForm } from "./components/genEntityForm";
-import { generateListFilters } from "./components/genListFilters";
-import { generateGetHook } from "./hooks/genGetEntity";
-import { generateGetPaginatedHook } from "./hooks/genGetPaginatedEntity";
-import { generateCreateHook } from "./hooks/genCreateEntity";
-import { generateUpdateHook } from "./hooks/genUpdateEntity";
-import { generateDeleteHook } from "./hooks/genDeleteEntity";
-import { BaseObject } from "@/types/generatorTypes";
+import { generateApiSchema } from '../api/complete/genApiSchema';
+import { writeFile, GeneratorBaseObject } from '../utils';
+import { generateColumns } from './components/genColumns';
+import { generateCreateDialog } from './components/genCreateDialog';
+import { generateDeleteDialog } from './components/genDeleteDialog';
+import { generateEntityForm } from './components/genEntityForm';
+import { generatePageFilters } from './components/genPageFilters';
+import { generateUpdateDialog } from './components/genUpdateDialog';
+import { generateEndpointConstants } from './constants/genEndpointConstants';
+import { generateCreateHook } from './hooks/genCreateEntity';
+import { generateDeleteHook } from './hooks/genDeleteEntity';
+import { generateFindPaginatedHook } from './hooks/genFindPaginatedEntity';
+import { generateGetByIdHook } from './hooks/genGetEntity';
+import { generateUpdateHook } from './hooks/genUpdateEntity';
+import { generateListPage } from './page/genListPage';
+import { genViewRecordPage } from './page/genViewRecordPage';
 
-function generateInterfaces(obj: BaseObject) {
-  const { entity } = obj;
+function generatePages(obj: GeneratorBaseObject) {
+  const listPage = generateListPage(obj);
+  writeFile(listPage.template, listPage.path);
 
-  writeFile(generateRecordPage(obj), `app/${entity.kebabCase()}/[id]/page.tsx`);
-  writeFile(generateMainPageFile(obj), `app/${entity.kebabCase()}/page.tsx`);
+  const mainPage = genViewRecordPage(obj);
+  writeFile(mainPage.template, mainPage.path);
 }
 
-function generateComponents(obj: BaseObject) {
-  const { entity } = obj;
+function generateConstants(obj: GeneratorBaseObject) {
+  const apiSchema = generateApiSchema(obj);
+  writeFile(apiSchema.template, apiSchema.path);
 
-  writeFile(
-    generateCreateModal(obj),
-    `modules/${entity.camelCase()}/components/create${entity.pascalCase()}Modal.tsx`
-  );
-  writeFile(
-    generateUpdateModal(obj),
-    `modules/${entity.camelCase()}/components/update${entity.pascalCase()}Modal.tsx`
-  );
-  writeFile(
-    generateDeleteModal(obj),
-    `modules/${entity.camelCase()}/components/delete${entity.pascalCase()}Modal.tsx`
-  );
-  writeFile(
-    generateEntityForm(obj),
-    `modules/${entity.camelCase()}/components/${entity.camelCase()}Form.tsx`
-  );
-  writeFile(
-    generateListFilters(obj),
-    `modules/${entity.camelCase()}/components/${entity.camelCase()}Filters.tsx`
-  );
+  const endpointConstants = generateEndpointConstants(obj);
+  writeFile(endpointConstants.template, endpointConstants.path);
 }
 
-function generateHooks(obj: BaseObject) {
-  const { entity } = obj;
+function generateComponents(obj: GeneratorBaseObject) {
+  const createDialog = generateCreateDialog(obj);
+  writeFile(createDialog.template, createDialog.path);
 
-  writeFile(
-    generateGetHook(obj),
-    `modules/${entity.camelCase()}/hooks/useGet${entity.pascalCase()}.ts`
-  );
-  writeFile(
-    generateGetPaginatedHook(obj),
-    `modules/${entity.camelCase()}/hooks/useGet${entity.pluralPascal()}Paginated.ts`
-  );
-  writeFile(
-    generateCreateHook(obj),
-    `modules/${entity.camelCase()}/hooks/useCreate${entity.pascalCase()}.ts`
-  );
-  writeFile(
-    generateUpdateHook(obj),
-    `modules/${entity.camelCase()}/hooks/useUpdate${entity.pascalCase()}.ts`
-  );
-  writeFile(
-    generateDeleteHook(obj),
-    `modules/${entity.camelCase()}/hooks/useDelete${entity.pascalCase()}.ts`
-  );
+  const updateDialog = generateUpdateDialog(obj);
+  writeFile(updateDialog.template, updateDialog.path);
+
+  const deleteDialog = generateDeleteDialog(obj);
+  writeFile(deleteDialog.template, deleteDialog.path);
+
+  const entityForm = generateEntityForm(obj);
+  writeFile(entityForm.template, entityForm.path);
+
+  const pageFilters = generatePageFilters(obj);
+  writeFile(pageFilters.template, pageFilters.path);
+
+  const columns = generateColumns(obj);
+  writeFile(columns.template, columns.path);
 }
 
-export function generatePages(obj: BaseObject) {
-  generateInterfaces(obj);
+function generateHooks(obj: GeneratorBaseObject) {
+  const getPaginatedHook = generateFindPaginatedHook(obj);
+  writeFile(getPaginatedHook.template, getPaginatedHook.path);
+
+  const createHook = generateCreateHook(obj);
+  writeFile(createHook.template, createHook.path);
+
+  const updateHook = generateUpdateHook(obj);
+  writeFile(updateHook.template, updateHook.path);
+
+  const deleteHook = generateDeleteHook(obj);
+  writeFile(deleteHook.template, deleteHook.path);
+
+  const getHook = generateGetByIdHook(obj);
+  writeFile(getHook.template, getHook.path);
+}
+
+export function generateFront(obj: GeneratorBaseObject) {
+  generatePages(obj);
   generateComponents(obj);
   generateHooks(obj);
+  generateConstants(obj);
 }

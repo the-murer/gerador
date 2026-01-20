@@ -14,7 +14,7 @@ export const ${entity.pascalCase()}Page = () => {
   const { data } = useGet${entity.pascalCase()}({ id })
 
   return (
-    <DefaultPage>
+    <DefaultPage >
       <DefaultPage.Header
         title={data?.name ?? '${entity.pascalCase()}'}
         description="Visualize e altere as informações do seu ${entity.pascalCase()}"

@@ -7,6 +7,7 @@ import { generateEntityForm } from './components/genEntityForm';
 import { generatePageFilters } from './components/genPageFilters';
 import { generateUpdateDialog } from './components/genUpdateDialog';
 import { generateEndpointConstants } from './constants/genEndpointConstants';
+import { generateFrontSchemas } from './constants/genSchemas';
 import { generateCreateHook } from './hooks/genCreateEntity';
 import { generateDeleteHook } from './hooks/genDeleteEntity';
 import { generateFindPaginatedHook } from './hooks/genFindPaginatedEntity';
@@ -14,58 +15,74 @@ import { generateGetByIdHook } from './hooks/genGetEntity';
 import { generateUpdateHook } from './hooks/genUpdateEntity';
 import { generateListPage } from './page/genListPage';
 import { genViewRecordPage } from './page/genViewRecordPage';
+import { generateListRoute } from './routes/genListPage';
+import { generateViewRecordRoute } from './routes/genViewRecordPage';
 
 function generatePages(obj: GeneratorBaseObject) {
   const listPage = generateListPage(obj);
-  writeFile(listPage.template, listPage.path);
+  writeFile(listPage.template, `${obj.frontPath}/${listPage.path}`);
 
   const mainPage = genViewRecordPage(obj);
-  writeFile(mainPage.template, mainPage.path);
+  writeFile(mainPage.template, `${obj.frontPath}/${mainPage.path}`);
 }
 
 function generateConstants(obj: GeneratorBaseObject) {
-  const apiSchema = generateApiSchema(obj);
-  writeFile(apiSchema.template, apiSchema.path);
+  const schemas = generateFrontSchemas(obj);
+  writeFile(schemas.template, `${obj.frontPath}/${schemas.path}`);
 
-  const endpointConstants = generateEndpointConstants(obj);
-  writeFile(endpointConstants.template, endpointConstants.path);
+  const endpoints = generateEndpointConstants(obj);
+  writeFile(endpoints.template, `${obj.frontPath}/${endpoints.path}`);
 }
 
 function generateComponents(obj: GeneratorBaseObject) {
   const createDialog = generateCreateDialog(obj);
-  writeFile(createDialog.template, createDialog.path);
+  writeFile(createDialog.template, `${obj.frontPath}/${createDialog.path}`);
 
   const updateDialog = generateUpdateDialog(obj);
-  writeFile(updateDialog.template, updateDialog.path);
+  writeFile(updateDialog.template, `${obj.frontPath}/${updateDialog.path}`);
 
   const deleteDialog = generateDeleteDialog(obj);
-  writeFile(deleteDialog.template, deleteDialog.path);
+  writeFile(deleteDialog.template, `${obj.frontPath}/${deleteDialog.path}`);
 
   const entityForm = generateEntityForm(obj);
-  writeFile(entityForm.template, entityForm.path);
+  writeFile(entityForm.template, `${obj.frontPath}/${entityForm.path}`);
 
   const pageFilters = generatePageFilters(obj);
-  writeFile(pageFilters.template, pageFilters.path);
+  writeFile(pageFilters.template, `${obj.frontPath}/${pageFilters.path}`);
 
   const columns = generateColumns(obj);
-  writeFile(columns.template, columns.path);
+  writeFile(columns.template, `${obj.frontPath}/${columns.path}`);
 }
 
 function generateHooks(obj: GeneratorBaseObject) {
   const getPaginatedHook = generateFindPaginatedHook(obj);
-  writeFile(getPaginatedHook.template, getPaginatedHook.path);
+  writeFile(
+    getPaginatedHook.template,
+    `${obj.frontPath}/${getPaginatedHook.path}`,
+  );
 
   const createHook = generateCreateHook(obj);
-  writeFile(createHook.template, createHook.path);
+  writeFile(createHook.template, `${obj.frontPath}/${createHook.path}`);
 
   const updateHook = generateUpdateHook(obj);
-  writeFile(updateHook.template, updateHook.path);
+  writeFile(updateHook.template, `${obj.frontPath}/${updateHook.path}`);
 
   const deleteHook = generateDeleteHook(obj);
-  writeFile(deleteHook.template, deleteHook.path);
+  writeFile(deleteHook.template, `${obj.frontPath}/${deleteHook.path}`);
 
   const getHook = generateGetByIdHook(obj);
-  writeFile(getHook.template, getHook.path);
+  writeFile(getHook.template, `${obj.frontPath}/${getHook.path}`);
+}
+
+function generateRoutes(obj: GeneratorBaseObject) {
+  const listRoute = generateListRoute(obj);
+  writeFile(listRoute.template, `${obj.frontPath}/${listRoute.path}`);
+
+  const viewRecordRoute = generateViewRecordRoute(obj);
+  writeFile(
+    viewRecordRoute.template,
+    `${obj.frontPath}/${viewRecordRoute.path}`,
+  );
 }
 
 export function generateFront(obj: GeneratorBaseObject) {
@@ -73,4 +90,5 @@ export function generateFront(obj: GeneratorBaseObject) {
   generateComponents(obj);
   generateHooks(obj);
   generateConstants(obj);
+  generateRoutes(obj);
 }

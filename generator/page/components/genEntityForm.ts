@@ -1,4 +1,4 @@
-import { GeneratorBaseObject } from '@/generator/utils';
+import { GeneratorBaseObject, mapObjectFields } from '@/generator/utils';
 
 export function generateEntityForm(obj: GeneratorBaseObject) {
   const { entity } = obj;
@@ -8,34 +8,18 @@ import { DefaultInput } from '@/ui/components/input/input'
 import { InputTypes } from '@/ui/components/input/input-map'
 import { type Control } from 'react-hook-form'
 
-export const UserForm = ({ control }: { control: Control<any> }) => {
-  const rolesOptions = [
-    { label: 'Administrador', value: 'admin' },
-    { label: 'Usuário', value: 'user' },
-  ]
-
+export const ${entity.pascalCase()}Form = ({ control }: { control: Control<any> }) => {
   return (
     <form>
-      <DefaultInput
-        type={InputTypes.TEXT}
-        name="name"
-        label="Nome"
+    ${mapObjectFields(
+      obj.model,
+      (key, value) => `<DefaultInput
+        type={InputTypes.${value.toUpperCase()}}
+        name="${key}"
+        label="${key}"
         control={control}
-      />
-      <DefaultInput
-        type={InputTypes.TEXT}
-        name="email"
-        label="Email"
-        control={control}
-      />
-      <DefaultInput
-        type={InputTypes.MULTI_SELECT}
-        name="roles"
-        label="Roles"
-        placeholder="Selecione as regras"
-        control={control}
-        options={rolesOptions}
-      />
+      /> \n`,
+    )}
     </form>
   )
 }

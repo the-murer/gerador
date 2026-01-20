@@ -75,7 +75,6 @@ export {
 };
 
 export interface BaseObject {
-  apiPath: string;
   entity: string;
   model: Record<string, string>;
 }
@@ -83,4 +82,6 @@ export interface BaseObject {
 export interface GeneratorBaseObject extends BaseObject {
   initApi: boolean;
   initFront: boolean;
+  apiPath: string;
+  frontPath: string;
 }

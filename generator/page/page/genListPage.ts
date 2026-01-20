@@ -1,4 +1,4 @@
-import { GeneratorBaseObject } from "@/generator/utils";
+import { GeneratorBaseObject } from '@/generator/utils';
 
 export function generateListPage(obj: GeneratorBaseObject) {
   const { entity } = obj;
@@ -7,36 +7,36 @@ export function generateListPage(obj: GeneratorBaseObject) {
   import { DefaultPagination } from '@/ui/components/pagination/pagination'
   import { DefaultTable } from '@/ui/blocks/table'
   import { DefaultPage } from '@/ui/templates/default-page'
-  import { useUserColumns } from '../components/user-columns'
-  import { useFindUsers } from '../hooks/use-find-users'
   import { useSearchParams } from '@/common/hooks/use-list-search-params'
-  import { UsersFilters } from '../components/user-filters'
   import { useModal } from '@ebay/nice-modal-react'
-  import { CreateUserDialog } from '../components/create-user-dialog'
+  import { use${entity.pascalCase()}Columns } from '../components/${entity.kebabCase()}-columns'
+  import { useFind${entity.pluralPascal()} } from '../hooks/use-find-${entity.pluralKebab()}'
+  import { ${entity.pluralPascal()}Filters } from '../components/${entity.kebabCase()}-filters'
+  import { Create${entity.pascalCase()}Dialog } from '../components/create-${entity.kebabCase()}-dialog'
   
-  export const UsersPage = () => {
+  export const ${entity.pluralPascal()}Page = () => {
     const { search, sort, handlePageChange, setSearchParams } =
-      useSearchParams('/admin/users/')
+      useSearchParams('/admin/${entity.pluralKebab()}/')
     const { page = 1 } = search
   
-    const { data, isLoading, error } = useFindUsers({
+    const { data, isLoading, error } = useFind${entity.pluralPascal()}({
       page,
       sort: sort.sortedBy,
       sortOrder: sort.sortOrder,
     })
   
-    const columns = useUserColumns()
-    const createUserDialog = useModal(CreateUserDialog)
+    const columns = use${entity.pascalCase()}Columns()
+    const create${entity.pascalCase()}Dialog = useModal(Create${entity.pascalCase()}Dialog)
   
     return (
-      <DefaultPage action="read" subject="User">
+      <DefaultPage action="read" subject="${entity.pascalCase()}">
         <DefaultPage.Header
-          title="Usuários"
-          description="Listagem de usuários cadastrados no sistema"
-          onActionClick={createUserDialog.show}
-          createPermission={{ action: 'create', subject: 'User' }}
+          title="${entity}s"
+          description="Listagem de ${entity}s cadastrados no sistema"
+          onActionClick={create${entity.pascalCase()}Dialog.show}
+          createPermission={{ action: 'create', subject: '${entity.pascalCase()}' }}
         >
-          <UsersFilters search={search} updateSearchParams={setSearchParams} />
+          <${entity.pluralPascal()}Filters search={search} updateSearchParams={setSearchParams} />
         </DefaultPage.Header>
   
         <DefaultTable
@@ -60,10 +60,6 @@ export function generateListPage(obj: GeneratorBaseObject) {
 
   return {
     template,
-    path: `modules/${entity.kebabCase()}/pages/${entity.kebabCase()}-page.tsx`,
+    path: `modules/${entity.kebabCase()}/pages/${entity.pluralKebab()}-page.tsx`,
   };
 }
-
-
-
-

@@ -1,4 +1,4 @@
-import { GeneratorBaseObject } from '@/generator/utils';
+import { GeneratorBaseObject, mapObjectFields } from '@/generator/utils';
 
 export function generatePageFilters(obj: GeneratorBaseObject) {
   const { entity } = obj;
@@ -9,16 +9,17 @@ import {
   type DefaultPageFiltersProps,
 } from '@/ui/blocks/filters/page-filters'
 
-export const UsersFilters = ({
+export const ${entity.pluralPascal()}Filters = ({
   search,
   updateSearchParams,
 }: DefaultPageFiltersProps) => {
   return (
     <PageFilters search={search} updateSearchParams={updateSearchParams}>
       <PageFilters.Content>
-        <PageFilters.Input label="Nome" name="name" />
-        <PageFilters.Input label="Email" name="email" />
-        <PageFilters.Input label="Ativo" name="active" />
+      ${mapObjectFields(
+        obj.model,
+        (key) => `<PageFilters.Input label="${key}" name="${key}" />\n`,
+      )}
       </PageFilters.Content>
       <PageFilters.Actions />
     </PageFilters>

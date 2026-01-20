@@ -11,6 +11,7 @@ import { GeneratorBaseObject } from './utils';
 const baseObject: GeneratorBaseObject = {
   entity: '',
   apiPath: '',
+  frontPath: '',
   initApi: false,
   initFront: false,
   model: {},
@@ -39,6 +40,7 @@ function generateFiles(formedObject: GeneratorBaseObject) {
 async function main() {
   baseObject.entity = await askQuestion('Nome da entidade:');
   baseObject.apiPath = await askQuestion('Caminho da API:');
+  baseObject.frontPath = await askQuestion('Caminho do front:');
   baseObject.initApi = await askBooleanOption('Gerar API?');
   baseObject.initFront = await askBooleanOption('Gerar Página?');
 

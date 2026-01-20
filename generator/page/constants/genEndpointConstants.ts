@@ -5,29 +5,19 @@ export function generateEndpointConstants(obj: GeneratorBaseObject) {
 
   const template = `
 import { DefaultEndpoint } from '@/common/api/base-endpoint'
+import type { ${entity.pascalCase()} } from './${entity.kebabCase()}-schemas'
 
-export type User = {
-  _id: string
-  active: boolean
-  name: string
-  email: string
-  profilePictureUrl?: string
-  roles: string[]
-  createdAt: string
-  updatedAt: string
-}
-
-class UserEndpoints extends DefaultEndpoint<User> {
+class ${entity.pascalCase()}Endpoints extends DefaultEndpoint<${entity.pascalCase()}> {
   constructor() {
-    super('users', 'user')
+    super('${entity.pluralKebab()}', '${entity.kebabCase()}')
   }
 }
 
-export const userApi = new UserEndpoints()
+export const ${entity.camelCase()}Api = new ${entity.pascalCase()}Endpoints()
 `;
 
   return {
     template,
-    path: `modules/${entity.kebabCase()}/utils/constants.ts`,
+    path: `modules/${entity.kebabCase()}/utils/${entity.kebabCase()}-constants.ts`,
   };
 }

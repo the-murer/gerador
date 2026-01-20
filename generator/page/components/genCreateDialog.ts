@@ -1,47 +1,45 @@
-import { GeneratorBaseObject } from '@/generator/utils';
+import { GeneratorBaseObject, mapObjectFields } from '@/generator/utils';
 
 export function generateCreateDialog(obj: GeneratorBaseObject) {
   const { entity } = obj;
 
   const template = `
 import NiceModal, { useModal } from '@ebay/nice-modal-react'
-import { UserForm } from './user-form'
+import { toaster } from '@/ui/storybook/toaster'
 import { DefaultModal } from '@/ui/blocks/modal/default-modal'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { userBodySerializer } from '../utils/schemas'
-import { useCreateUser } from '../hooks/use-create-user'
-import { toaster } from '@/ui/storybook/toaster'
+import { ${entity.pascalCase()}Form } from './${entity.kebabCase()}-form'
+import { ${entity.camelCase()}BodySerializer } from '../utils/${entity.kebabCase()}-schemas'
+import { useCreate${entity.pascalCase()} } from '../hooks/use-create-${entity.kebabCase()}'
 
-export const CreateUserDialog = NiceModal.create(() => {
+export const Create${entity.pascalCase()}Dialog = NiceModal.create(() => {
   const modal = useModal()
-  const { mutateAsync: createUser, isPending } = useCreateUser()
+  const { mutateAsync: create${entity.pascalCase()}, isPending } = useCreate${entity.pascalCase()}()
   const { handleSubmit, control } = useForm({
-    resolver: zodResolver(userBodySerializer),
+    resolver: zodResolver(${entity.camelCase()}BodySerializer),
     mode: 'onBlur',
     defaultValues: {
-      name: '',
-      email: '',
-      roles: [],
+      ${mapObjectFields(obj.model, (key) => `${key}: '',\n`)}
     },
   })
 
   const handleFormSubmit = handleSubmit(async (data) => {
     try {
-      await createUser(data)
+      await create${entity.pascalCase()}(data)
       modal.hide()
     } catch (error) {
       toaster.error({
-        title: 'Erro ao criar usuário',
+        title: 'Erro ao criar ${entity}',
       })
     }
   })
 
   return (
     <DefaultModal open={modal.visible} onOpenChange={modal.hide}>
-      <DefaultModal.Header title="Criar Usuário" showCloseButton={true} />
+      <DefaultModal.Header title="Criar ${entity}" showCloseButton={true} />
       <DefaultModal.Body>
-        <UserForm control={control} />
+        <${entity.pascalCase()}Form control={control} />
       </DefaultModal.Body>
       <DefaultModal.Confirm
         submit={handleFormSubmit}

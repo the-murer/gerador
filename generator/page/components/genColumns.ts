@@ -1,41 +1,30 @@
-
-
-
-
-
-
-
-
-import { GeneratorBaseObject } from '@/generator/utils';
+import { GeneratorBaseObject, mapObjectFields } from '@/generator/utils';
 
 export function generateColumns(obj: GeneratorBaseObject) {
   const { entity } = obj;
 
   const template = `
+  import { Flex } from '@chakra-ui/react'
 import { Switch } from '@/ui/components/switch/switch'
 import type { ColumnDef } from '@tanstack/react-table'
-import type { User } from '../utils/constants'
-import { useChangeUserActive } from '../hooks/use-change-user-active'
 import { useModal } from '@ebay/nice-modal-react'
-import { UpdateUserDialog } from './update-user-dialog'
 import { ColumnsMenu } from '@/ui/blocks/menu/columns-menu'
 import { Typography } from '@/ui/components/typography/typography'
 import { formatDate } from '@/common/utils/time-utils'
 import { useAbility } from '@/modules/auth/stores/auth-user-store'
-import { Flex } from '@chakra-ui/react'
-import { getUserBackgroundColor, getUserInitials } from '../utils/user-utils'
-import { ImageIcon } from 'lucide-react'
-import { UpdateProfilePictureDialog } from './update-profile-picture-dialog'
+import type { ${entity.pascalCase()} } from '../utils/${entity.kebabCase()}-schemas'
+import { Update${entity.pascalCase()}Dialog } from './update-${entity.kebabCase()}-dialog'
 
-export const useUserColumns = () => {
-  const { mutateAsync: changeUserActive } = useChangeUserActive()
+export const use${entity.pascalCase()}Columns = () => {
   const ability = useAbility()
-  const editUserModal = useModal(UpdateUserDialog)
-  const canUpdateUser = ability.can('update', 'User')
+  const edit${entity.pascalCase()}Modal = useModal(Update${entity.pascalCase()}Dialog)
+  const canUpdate${entity.pascalCase()} = ability.can('update', '${entity.pascalCase()}')
 
   return [
-    { accessorKey: 'name', header: 'Nome' },
-    { accessorKey: 'email', header: 'Email' },
+    ${mapObjectFields(
+      obj.model,
+      (key) => `{ accessorKey: '${key}', header: '${key}' },\n`,
+    )}
     {
       accessorKey: 'createdAt',
       header: 'Criado em',
@@ -49,13 +38,13 @@ export const useUserColumns = () => {
       cell: ({ row }) => (
         <ColumnsMenu>
           <ColumnsMenu.EditItem
-            disabled={!canUpdateUser}
-            onClick={() => editUserModal.show({ user: row.original })}
+            disabled={!canUpdate${entity.pascalCase()}}
+            onClick={() => edit${entity.pascalCase()}Modal.show({ ${entity.kebabCase()}: row.original })}
           />
         </ColumnsMenu>
       ),
     },
-  ] as ColumnDef<User>[]
+  ] as ColumnDef<${entity.pascalCase()}>[]
 }
 
 `;

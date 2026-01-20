@@ -5,12 +5,12 @@ export function generateDeleteHook(obj: GeneratorBaseObject) {
 
   const template = `
 import { useQuery } from '@tanstack/react-query'
-import { userApi } from '../utils/constants'
+import { ${entity.camelCase()}Api } from '../utils/${entity.kebabCase()}-constants'
 
-export const useGetUser = ({ id }: { id: string }) => {
+export const useGet${entity.pascalCase()} = ({ id }: { id: string }) => {
   return useQuery({
-    queryFn: () => userApi.delete(id),
-    queryKey: userApi.keys.get(id),
+    queryFn: () => ${entity.camelCase()}Api.delete(id),
+    queryKey: ${entity.camelCase()}Api.keys.get(id),
   })
 }
 `;

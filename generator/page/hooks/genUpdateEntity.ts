@@ -5,19 +5,19 @@ export function generateUpdateHook(obj: GeneratorBaseObject) {
 
   const template = `
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { userApi } from '../utils/constants'
 import { toaster } from '@/ui/storybook/toaster'
-import type { UserUpdateSerializerType } from '../utils/schemas'
+import { ${entity.camelCase()}Api } from '../utils/${entity.kebabCase()}-constants'
+import type { ${entity.pascalCase()}UpdateSerializerType } from '../utils/${entity.kebabCase()}-schemas'
 
-export const useUpdateUser = () => {
+export const useUpdate${entity.pascalCase()} = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UserUpdateSerializerType }) =>
-      userApi.update(id, data, { queryClient }),
+    mutationFn: ({ id, data }: { id: string; data: ${entity.pascalCase()}UpdateSerializerType }) =>
+      ${entity.camelCase()}Api.update(id, data, { queryClient }),
     onSuccess: () => {
       toaster.success({
-        title: 'Usuário atualizado com sucesso',
+        title: '${entity} atualizado com sucesso',
       })
     },
   })

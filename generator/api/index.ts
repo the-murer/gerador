@@ -10,6 +10,8 @@ import { generateApiController } from './complete/genApiController';
 import { generateApiModule } from './complete/genApiModule';
 import { generateFindDto } from './complete/dto/genFindDto';
 import { generateCreateDto } from './complete/dto/genCreateDto';
+import { injectAppModule } from './injectors/injectAppModule';
+import { injectApiRole } from './injectors/injectApiRole';
 
 function generateApiHanlders(obj: BaseObject) {
   const create = generateCreateHandler(obj);
@@ -50,8 +52,15 @@ function generateDto(obj: BaseObject) {
   writeFile(findDto.template, findDto.path);
 }
 
+function injectCode(obj: BaseObject) {
+  injectAppModule(obj);
+  injectApiRole(obj);
+}
+
 export function generateApi(obj: BaseObject) {
   generateApiHanlders(obj);
   generateModule(obj);
   generateDto(obj);
+
+  injectCode(obj);
 }

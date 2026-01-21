@@ -13,6 +13,8 @@ import { generateDeleteHook } from './hooks/genDeleteEntity';
 import { generateFindPaginatedHook } from './hooks/genFindPaginatedEntity';
 import { generateGetByIdHook } from './hooks/genGetEntity';
 import { generateUpdateHook } from './hooks/genUpdateEntity';
+import { injectRoleSubject } from './injectors/injectorRoleSubject';
+import { injectSidebarRoute } from './injectors/injectorSidebar';
 import { generateListPage } from './page/genListPage';
 import { genViewRecordPage } from './page/genViewRecordPage';
 import { generateListRoute } from './routes/genListPage';
@@ -85,10 +87,17 @@ function generateRoutes(obj: GeneratorBaseObject) {
   );
 }
 
+function injectCode(obj: GeneratorBaseObject) {
+  injectRoleSubject(obj);
+  injectSidebarRoute(obj);
+}
+
 export function generateFront(obj: GeneratorBaseObject) {
   generatePages(obj);
   generateComponents(obj);
   generateHooks(obj);
   generateConstants(obj);
   generateRoutes(obj);
+
+  injectCode(obj);
 }

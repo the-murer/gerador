@@ -1,7 +1,7 @@
-import { mapObjectFields, BaseObject } from '../../utils';
+import { BaseObject } from '../../utils';
 
 export function generateApiRepository(obj: BaseObject) {
-  const { entity, model, apiPath } = obj;
+  const { entity, apiPath } = obj;
 
   const template = `
 import { Injectable } from '@nestjs/common';

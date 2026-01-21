@@ -62,6 +62,47 @@ function mapObjectFields(
   return Object.entries(model).map(([key, value]) => writeFunction(key, value));
 }
 
+export interface InjectTemplateOptions {
+  template: string;
+  path: string;
+  marker: string;
+  position?: 'before' | 'after';
+}
+
+function injectTemplate(options: InjectTemplateOptions) {
+  const { template, path, marker, position = 'after' } = options;
+
+  if (!fs.existsSync(path)) {
+    console.log(`File ${path} does not exist, skipping injection`);
+    return;
+  }
+
+  const fileContent = fs.readFileSync(path, 'utf-8');
+  const markerIndex = fileContent.indexOf(marker);
+
+  if (markerIndex === -1) {
+    console.log(`Marker "${marker}" not found in file ${path}, skipping injection`);
+    return;
+  }
+
+  let newContent: string;
+
+  if (position === 'before') {
+    // Injeta antes do marcador
+    const beforeMarker = fileContent.substring(0, markerIndex);
+    const afterMarker = fileContent.substring(markerIndex);
+    newContent = beforeMarker + template + afterMarker;
+  } else {
+    // Injeta depois do marcador (padrão)
+    const beforeMarker = fileContent.substring(0, markerIndex + marker.length);
+    const afterMarker = fileContent.substring(markerIndex + marker.length);
+    newContent = beforeMarker + template + afterMarker;
+  }
+
+  fs.writeFileSync(path, newContent, 'utf-8');
+  console.log(`Template injected successfully in ${path}`);
+}
+
 export {
   toCamelCase,
   toPascalCase,
@@ -72,16 +113,17 @@ export {
   toPluralKebabCase,
   writeFile,
   mapObjectFields,
+  injectTemplate,
 };
 
 export interface BaseObject {
   entity: string;
   model: Record<string, string>;
+  apiPath: string;
 }
 
 export interface GeneratorBaseObject extends BaseObject {
   initApi: boolean;
   initFront: boolean;
-  apiPath: string;
   frontPath: string;
 }

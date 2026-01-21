@@ -4,11 +4,11 @@ export function generateDeleteHandler(obj: BaseObject) {
   const { entity, apiPath } = obj;
 
   const handler = `
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CommandHandler } from 'src/utils/command-handler';
+import { UniqueIdDto } from '@app/app/dtos/unique-id.dto';
 import { ${entity.pascalCase()} } from '../${entity.kebabCase()}.schema';
 import { ${entity.pluralPascal()}Repository } from '../${entity.pluralKebab()}.repository';
-import { UniqueIdDto } from '@app/app/dtos/unique-id.dto';
 
 interface Delete${entity.pascalCase()}HandlerInput extends UniqueIdDto {}
 

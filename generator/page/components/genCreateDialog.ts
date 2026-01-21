@@ -20,14 +20,14 @@ export const Create${entity.pascalCase()}Dialog = NiceModal.create(() => {
     resolver: zodResolver(${entity.camelCase()}BodySerializer),
     mode: 'onBlur',
     defaultValues: {
-      ${mapObjectFields(obj.model, (key) => `${key}: '',\n`)}
+      ${mapObjectFields(obj.model, (key) => `${key}: '',`).join('\n')}
     },
   })
 
   const handleFormSubmit = handleSubmit(async (data) => {
     try {
       await create${entity.pascalCase()}(data)
-      modal.hide()
+      modal.remove()
     } catch (error) {
       toaster.error({
         title: 'Erro ao criar ${entity}',
@@ -36,7 +36,7 @@ export const Create${entity.pascalCase()}Dialog = NiceModal.create(() => {
   })
 
   return (
-    <DefaultModal open={modal.visible} onOpenChange={modal.hide}>
+    <DefaultModal open={modal.visible} onOpenChange={modal.remove}>
       <DefaultModal.Header title="Criar ${entity}" showCloseButton={true} />
       <DefaultModal.Body>
         <${entity.pascalCase()}Form control={control} />
@@ -44,7 +44,7 @@ export const Create${entity.pascalCase()}Dialog = NiceModal.create(() => {
       <DefaultModal.Confirm
         submit={handleFormSubmit}
         isLoading={isPending}
-        onCancel={modal.hide}
+        onCancel={modal.remove}
       />
     </DefaultModal>
   )

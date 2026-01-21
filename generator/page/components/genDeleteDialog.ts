@@ -9,7 +9,7 @@ import { useParams } from '@tanstack/react-router'
 import { useGet${entity.pascalCase()} } from '../hooks/use-get-${entity.kebabCase()}'
 
 export const ${entity.pascalCase()}Page = () => {
-  const { id } = useParams({ from: '/admin/${entity.kebabCase()}/$id' })
+  const { id } = useParams({ from: '/admin/${entity.pluralKebab()}/$id' })
 
   const { data } = useGet${entity.pascalCase()}({ id })
 

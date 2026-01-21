@@ -6,17 +6,15 @@ export function generateUpdateDialog(obj: GeneratorBaseObject) {
   const template = `
 import NiceModal, { useModal } from '@ebay/nice-modal-react'
 import { toaster } from '@/ui/storybook/toaster'
-import { useEffect } from 'react'
 import { DefaultModal } from '@/ui/blocks/modal/default-modal'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { ${entity.pascalCase()} } from '../utils/${entity.kebabCase()}-constants'
 import { ${entity.pascalCase()}Form } from './${entity.kebabCase()}-form'
-import { ${entity.camelCase()}UpdateSerializer } from '../utils/${entity.kebabCase()}-schemas'
+import { ${entity.camelCase()}UpdateSerializer, type ${entity.pascalCase()} } from '../utils/${entity.kebabCase()}-schemas'
 import { useUpdate${entity.pascalCase()} } from '../hooks/use-update-${entity.kebabCase()}'
 
 export const Update${entity.pascalCase()}Dialog = NiceModal.create(({ ${entity.camelCase()} }: { ${entity.kebabCase()}: ${entity.pascalCase()} }) => {
-  const { handleSubmit, control, reset } = useForm({
+  const { handleSubmit, control } = useForm({
     resolver: zodResolver(${entity.camelCase()}UpdateSerializer),
     mode: 'onBlur',
     defaultValues: ${entity.camelCase()},
@@ -28,7 +26,7 @@ export const Update${entity.pascalCase()}Dialog = NiceModal.create(({ ${entity.c
   const handleFormSubmit = handleSubmit(async (data) => {
     try {
       await update${entity.pascalCase()}({ id: ${entity.kebabCase()}._id, data })
-      modal.hide()
+      modal.remove()
     } catch (error) {
       toaster.error({
         title: 'Erro ao atualizar ${entity}',
@@ -36,12 +34,8 @@ export const Update${entity.pascalCase()}Dialog = NiceModal.create(({ ${entity.c
     }
   })
 
-  useEffect(() => {
-    reset(${entity.kebabCase()})
-  }, [${entity.kebabCase()}._id])
-
   return (
-    <DefaultModal open={modal.visible} onOpenChange={modal.hide}>
+    <DefaultModal open={modal.visible} onOpenChange={modal.remove}>
       <DefaultModal.Header
         title={\`Editar ${entity} \${${entity.kebabCase()}.name}\`}
         showCloseButton={true}
@@ -52,7 +46,7 @@ export const Update${entity.pascalCase()}Dialog = NiceModal.create(({ ${entity.c
       <DefaultModal.Confirm
         submit={handleFormSubmit}
         isLoading={isPending}
-        onCancel={modal.hide}
+        onCancel={modal.remove}
       />
     </DefaultModal>
   )

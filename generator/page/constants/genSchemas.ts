@@ -8,7 +8,7 @@ import { z } from 'zod'
 
 const ${entity.kebabCase()}Schema = z.object({
   _id: z.string(),
-  ${mapObjectFields(obj.model, (key, value) => `${key}: z.${value}(),\n`)}
+  ${mapObjectFields(obj.model, (key, value) => `${key}: z.${value}(),`).join('\n  ')}
 })
 
 export const ${entity.camelCase()}BodySerializer = ${entity.kebabCase()}Schema.omit({
@@ -16,7 +16,7 @@ export const ${entity.camelCase()}BodySerializer = ${entity.kebabCase()}Schema.o
 })
 
 export const ${entity.camelCase()}UpdateSerializer = ${entity.kebabCase()}Schema.pick({
-  ${mapObjectFields(obj.model, (key) => `${key}: true,\n`)}
+  ${mapObjectFields(obj.model, (key) => `${key}: true,`).join('\n  ')}
 })
 
 export type ${entity.pascalCase()} = z.infer<typeof ${entity.kebabCase()}Schema>

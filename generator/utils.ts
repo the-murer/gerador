@@ -100,7 +100,6 @@ function injectTemplate(options: InjectTemplateOptions) {
   }
 
   fs.writeFileSync(path, newContent, 'utf-8');
-  console.log(`Template injected successfully in ${path}`);
 }
 
 export {

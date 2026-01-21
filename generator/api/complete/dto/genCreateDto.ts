@@ -3,12 +3,12 @@ import { BaseObject, mapObjectFields } from '../../../utils';
 export function generateCreateDto(obj: BaseObject) {
   const { entity, apiPath, model } = obj;
 
-  const uniqueValidatos = [
-    ...new Set([mapObjectFields(model, (key, value) => value.pascalCase())]),
+  const uniqueValidators = [
+    ...new Set(Object.values(model).map((value) => value.pascalCase())),
   ];
 
   const template = `
-import { ${uniqueValidatos
+import { ${uniqueValidators
     .map((validator) => `Is${validator}`)
     .join(', ')} } from 'class-validator';
 

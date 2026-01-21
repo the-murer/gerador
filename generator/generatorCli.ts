@@ -104,3 +104,6 @@ export async function askModelAttributes() {
   rl.close();
   return baseObjectModel;
 }
+
+// JUST TO GARANTEE THE METHODS ARE CALLED
+export const enableExtensions = () => {}

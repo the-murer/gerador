@@ -23,8 +23,8 @@ export const use${entity.pascalCase()}Columns = () => {
   return [
     ${mapObjectFields(
       obj.model,
-      (key) => `{ accessorKey: '${key}', header: '${key}' },\n`,
-    )}
+      (key) => `{ accessorKey: '${key}', header: '${key}' },`,
+    ).join('\n  ')}
     {
       accessorKey: 'createdAt',
       header: 'Criado em',

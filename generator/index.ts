@@ -4,6 +4,7 @@ import {
   askBooleanOption,
   askModelAttributes,
   askQuestion,
+  enableExtensions,
 } from './generatorCli';
 import { GeneratorBaseObject } from './utils';
 
@@ -16,6 +17,18 @@ const baseObject: GeneratorBaseObject = {
   initFront: false,
   model: {},
 };
+
+// const baseObject: GeneratorBaseObject = {
+//   entity: 'payment',
+//   apiPath: '../api-gerador/src',
+//   frontPath: '../front-gerador/src',
+//   initApi: true,
+//   initFront: true,
+//   model: {
+//     value: 'number',
+//     status: 'string',
+//   },
+// };
 
 // RODA OS GERADORES
 function generateFiles(formedObject: GeneratorBaseObject) {
@@ -46,6 +59,7 @@ async function main() {
 
   baseObject.model = await askModelAttributes();
 
+  enableExtensions();
   generateFiles(baseObject);
 }
 

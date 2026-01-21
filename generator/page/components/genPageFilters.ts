@@ -18,8 +18,8 @@ export const ${entity.pluralPascal()}Filters = ({
       <PageFilters.Content>
       ${mapObjectFields(
         obj.model,
-        (key) => `<PageFilters.Input label="${key}" name="${key}" />\n`,
-      )}
+        (key) => `<PageFilters.Input label="${key}" name="${key}" />`,
+      ).join('\n  ')}
       </PageFilters.Content>
       <PageFilters.Actions />
     </PageFilters>

@@ -18,8 +18,8 @@ export const ${entity.pascalCase()}Form = ({ control }: { control: Control<any> 
         name="${key}"
         label="${key}"
         control={control}
-      /> \n`,
-    )}
+      />`,
+    ).join('\n  ')}
     </form>
   )
 }

@@ -4,7 +4,7 @@ const marker = '/* NAV_ITEMS_INJECTOR */';
 
 export function injectSidebarRoute(obj: GeneratorBaseObject) {
   const { entity, frontPath } = obj;
-  const filePath = `${frontPath}/ui/blocks/header/admin-header.tsx`;
+  const filePath = `${frontPath}/ui/blocks/navigation/admin-navigation.tsx`;
 
   const template = `  { title: '${entity.pluralPascal()}', to: '/admin/${entity.pluralKebab()}', icon: LayoutDashboard },\n`;
 

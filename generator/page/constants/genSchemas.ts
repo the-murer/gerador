@@ -4,22 +4,24 @@ export function generateFrontSchemas(obj: GeneratorBaseObject) {
   const { entity } = obj;
 
   const template = `
-import { z } from 'zod'
+  import {
+    defaultEmailValidation,
+    defaultStringValidation,
+  } from '@/common/utils/validation-utils'
+  import { z } from 'zod'
+  import { defaultSchema } from '@/common/api/api-types'
 
-const ${entity.kebabCase()}Schema = z.object({
-  _id: z.string(),
-  ${mapObjectFields(obj.model, (key, value) => `${key}: z.${value}(),`).join('\n  ')}
-})
-
-export const ${entity.camelCase()}BodySerializer = ${entity.kebabCase()}Schema.omit({
-  _id: true,
+export const ${entity.camelCase()}Serializer = ${entity.kebabCase()}Schema.omit({
+  ${mapObjectFields(obj.model, (key, value) => `${key}: z.${value}(),`).join(
+    '\n  ',
+  )}
 })
 
 export const ${entity.camelCase()}UpdateSerializer = ${entity.kebabCase()}Schema.pick({
   ${mapObjectFields(obj.model, (key) => `${key}: true,`).join('\n  ')}
 })
 
-export type ${entity.pascalCase()} = z.infer<typeof ${entity.kebabCase()}Schema>
+export type ${entity.pascalCase()} = z.infer<typeof ${entity.camelCase()}BodySerializer> & z.infer<typeof defaultSchema>
 
 export type ${entity.pascalCase()}BodySerializerType = z.infer<typeof ${entity.camelCase()}BodySerializer>
 export type ${entity.pascalCase()}UpdateSerializerType = z.infer<typeof ${entity.camelCase()}UpdateSerializer>

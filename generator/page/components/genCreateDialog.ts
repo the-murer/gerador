@@ -10,14 +10,14 @@ import { DefaultModal } from '@/ui/blocks/modal/default-modal'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ${entity.pascalCase()}Form } from './${entity.kebabCase()}-form'
-import { ${entity.camelCase()}BodySerializer } from '../utils/${entity.kebabCase()}-schemas'
+import { ${entity.camelCase()}Serializer } from '../utils/${entity.kebabCase()}-schemas'
 import { useCreate${entity.pascalCase()} } from '../hooks/use-create-${entity.kebabCase()}'
 
 export const Create${entity.pascalCase()}Dialog = NiceModal.create(() => {
   const modal = useModal()
   const { mutateAsync: create${entity.pascalCase()}, isPending } = useCreate${entity.pascalCase()}()
   const { handleSubmit, control } = useForm({
-    resolver: zodResolver(${entity.camelCase()}BodySerializer),
+    resolver: zodResolver(${entity.camelCase()}Serializer),
     mode: 'onBlur',
     defaultValues: {
       ${mapObjectFields(obj.model, (key) => `${key}: '',`).join('\n')}
